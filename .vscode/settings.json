@@ -6,8 +6,10 @@
     "ipfs",
     "jianchao",
     "Metas",
+    "multiformats",
     "pnpm",
     "predebug",
-    "skypesky"
+    "skypesky",
+    "xbytes"
   ]
 }
