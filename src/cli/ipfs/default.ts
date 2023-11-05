@@ -14,7 +14,7 @@ function defaultCommand(): Command {
       }
 
 
-      console.log({path})
+      console.log('your path is', path)
   
     });
   
