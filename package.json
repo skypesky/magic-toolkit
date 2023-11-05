@@ -11,9 +11,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/skypesky/to-where-cli"
+    "url": "https://github.com/skypesky/magic-toolkit"
   },
-  "homepage": "https://github.com/skypesky/to-where-cli",
+  "homepage": "https://github.com/skypesky/magic-toolkit",
   "keywords": [
     "open",
     "alias",
@@ -40,10 +40,10 @@
     "prebuild": "npm run clean",
     "build": "node esbuild.config.cjs",
     "build:watch": "npm run build -- -w",
-    "deploy": "npm run build && npm uninstall -g to-where-cli && npm install -g . -f",
-    "deploy:remote": "npm uninstall -g to-where-cli && npm install -g to-where-cli",
+    "deploy": "npm run build && npm uninstall -g magic-toolkit && npm install -g . -f",
+    "deploy:remote": "npm uninstall -g magic-toolkit && npm install -g magic-toolkit",
     "verify": "npm run lint && npm run test",
-    "show:version": "npm show to-where-cli version"
+    "show:version": "npm show magic-toolkit version"
   },
   "dependencies": {
     "@types/hosted-git-info": "^3.0.2",
