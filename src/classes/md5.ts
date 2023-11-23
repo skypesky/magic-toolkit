@@ -1,23 +1,21 @@
-import { createReadStream, existsSync } from "fs";
+import { existsSync } from "fs";
 import { isAbsolute, join } from "path";
 import { cwd } from "process";
-import Hash from 'ipfs-only-hash';
-import { CID } from "multiformats";
-import { statSync } from "fs-extra";
+import { createReadStream, statSync } from "fs-extra";
 import xbytes from "xbytes";
 import prettyMilliseconds from 'pretty-ms';
+import hasha from "hasha";
 
-export interface IPFSInfo {
+export interface md5Info {
     absolutePath: string,
-    cidV0: string,
-    cidV1: string,
+    md5: string,
     size: string;
     duration: string;
 }
 
-export class ipfs {
+export class md5 {
 
-    static async getInfo(path: string): Promise<IPFSInfo> {
+    static async getInfo(path: string): Promise<md5Info> {
 
 
         const absolutePath = isAbsolute(path) ? path : join(cwd(), path);
@@ -27,17 +25,14 @@ export class ipfs {
         }
 
         const startTime = Date.now();
-        const readStream = createReadStream(absolutePath);
         const size: number = statSync(absolutePath).size;
 
-        const cidV0: string = await Hash.of(readStream);
-        const cidV1: string = CID.parse(cidV0).toV1().toString();
+        const md5: string = await hasha.fromStream(createReadStream(absolutePath), {algorithm: "md5"});
         const duration: string = prettyMilliseconds(Date.now() - startTime);
 
         return {
             absolutePath,
-            cidV0,
-            cidV1,
+            md5,
             size: `${size} bytes(${xbytes(size)})`,
             duration,
         }

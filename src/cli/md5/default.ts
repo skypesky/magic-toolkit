@@ -1,20 +1,20 @@
 import { Command } from "commander";
-import { IPFSInfo, ipfs } from "../../classes";
+import { md5, md5Info } from "../../classes/md5";
 
 function defaultCommand(): Command {
   const command = new Command();
 
   command
     .name("search")
-    .argument("[path]", "Get ipfs info(size, cid etc) for a specified path")
-    .description("Get ipfs info")
+    .argument("[path]", "Get md5 info(size, hash etc) for a specified path")
+    .description("Get md5 info")
     .action(async (path: string) => {
 
       if (!path) {
         return command.help();
       }
 
-      const info: IPFSInfo = await ipfs.getInfo(path);
+      const info: md5Info = await md5.getInfo(path);
       console.log(info)
     });
 

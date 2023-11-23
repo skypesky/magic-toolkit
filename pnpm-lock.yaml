@@ -29,6 +29,9 @@ dependencies:
   git-repo-info:
     specifier: ^2.1.1
     version: 2.1.1
+  hasha:
+    specifier: ^5.2.2
+    version: 5.2.2
   hosted-git-info:
     specifier: ^6.1.1
     version: 6.1.1
@@ -50,6 +53,9 @@ dependencies:
   open:
     specifier: ^8.4.0
     version: 8.4.0
+  pretty-ms:
+    specifier: ^8.0.0
+    version: 8.0.0
   prompts:
     specifier: ^2.4.2
     version: 2.4.2
@@ -98,16 +104,16 @@ devDependencies:
     specifier: ^4.0.1
     version: 4.0.1
   '@typescript-eslint/eslint-plugin':
-    specifier: ^5.42.1
+    specifier: ^5.46.0
     version: 5.46.0(@typescript-eslint/parser@5.46.0)(eslint@8.29.0)(typescript@4.9.4)
   '@typescript-eslint/parser':
-    specifier: ^5.42.1
+    specifier: ^5.46.0
     version: 5.46.0(eslint@8.29.0)(typescript@4.9.4)
   esbuild:
     specifier: ^0.16.4
     version: 0.16.4
   eslint:
-    specifier: '>=5.16.0'
+    specifier: ^8.29.0
     version: 8.29.0
   jest:
     specifier: ^29.3.1
@@ -2399,6 +2405,14 @@ packages:
     dependencies:
       function-bind: 1.1.1
 
+  /hasha@5.2.2:
+    resolution: {integrity: sha512-Hrp5vIK/xr5SkeN2onO32H0MgNZ0f17HRNH39WfL0SYUNOTZ5Lz1TJ8Pajo/87dYGEFlLMm7mIc/k/s6Bvz9HQ==}
+    engines: {node: '>=8'}
+    dependencies:
+      is-stream: 2.0.1
+      type-fest: 0.8.1
+    dev: false
+
   /hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==}
     dev: false
@@ -2638,7 +2652,6 @@ packages:
   /is-stream@2.0.1:
     resolution: {integrity: sha512-hFoiJiTl63nn+kstHGBtewWSKnQLpyb155KHheA1l39uvtO9nWIop1p3udqPcUd/xbF1VLMO4n7OI6p7RbngDg==}
     engines: {node: '>=8'}
-    dev: true
 
   /is-wsl@2.2.0:
     resolution: {integrity: sha512-fKzAra0rGJUUBwGBgNkHZuToZcn+TtXHpeCgmkMJMMYx1sQDYaCSyjJBSCa2nH1DGm7s3n1oBnohoVTBaN7Lww==}
@@ -3645,6 +3658,11 @@ packages:
       json-parse-even-better-errors: 2.3.1
       lines-and-columns: 1.2.4
 
+  /parse-ms@3.0.0:
+    resolution: {integrity: sha512-Tpb8Z7r7XbbtBTrM9UhpkzzaMrqA2VXMT3YChzYltwV3P3pM6t8wl7TvpMnSTosz1aQAdVib7kdoys7vYOPerw==}
+    engines: {node: '>=12'}
+    dev: false
+
   /parse5@7.1.2:
     resolution: {integrity: sha512-Czj1WaSVpaoj0wbhMzLmWD69anp2WH7FXMB9n1Sy8/ZFF9jolSQVMu1Ij5WIyGmcBmhk7EOndpO4mIpihVqAXw==}
     dependencies:
@@ -3712,6 +3730,13 @@ packages:
       ansi-styles: 5.2.0
       react-is: 18.2.0
     dev: true
+
+  /pretty-ms@8.0.0:
+    resolution: {integrity: sha512-ASJqOugUF1bbzI35STMBUpZqdfYKlJugy6JBziGi2EE+AL5JPJGSzvpeVXojxrr0ViUYoToUjb5kjSEGf7Y83Q==}
+    engines: {node: '>=14.16'}
+    dependencies:
+      parse-ms: 3.0.0
+    dev: false
 
   /prompts@2.4.2:
     resolution: {integrity: sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q==}
