@@ -14,8 +14,6 @@ function backupCommand(): Command {
       const org = options.org;
       const token = options.token;
 
-      console.log(options)
-
       if (org && token) {
         return new GithubBackup({ org, token }).backup();
       }
