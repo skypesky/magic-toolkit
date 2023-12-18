@@ -29,7 +29,6 @@ export class GithubIssueRestore extends AbstractGithubRestore {
         const issueData: MyIssue = await fs.readJSON(issueMeta.path);
         // 如果创建过了 issue 就不创建了
         const exists = await this.issueExists(issueMeta.repoName, issueData.title);
-        console.log('issue.title', issueData.title)
         if (!exists) {
             await this.octokit.issues.create({
                 owner: this.options.org,
@@ -37,7 +36,6 @@ export class GithubIssueRestore extends AbstractGithubRestore {
                 title: issueData.title,
                 body: issueData.body,
                 labels: issueData.labels,
-                milestone: issueData.milestone.title,
                 assignees: issueData.assignees.map(x => x.login)
             });
         }
@@ -50,26 +48,17 @@ export class GithubIssueRestore extends AbstractGithubRestore {
         });
 
         const commentsData = issueData.extra.comments.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-        await pAll(
-            commentsData.map(comment => {
-                return async () => {
-                    const exists = comments.find(c => c.body === comment.body);
-                    if (!exists) {
-                        await this.octokit.issues.createComment({
-                            owner: this.options.org,
-                            repo: issueMeta.repoName,
-                            issue_number: issue.number,
-                            body: comment.body
-                        });
-                    }
-                }
-            }),
-            {
-                concurrency: cpus().length,
+        for (const comment of commentsData) {
+            const exists = comments.find(c => c.body === comment.body);
+            if (!exists) {
+                await this.octokit.issues.createComment({
+                    owner: this.options.org,
+                    repo: issueMeta.repoName,
+                    issue_number: issue.number,
+                    body: comment.body
+                });
             }
-        )
-
-        return null;
+        }
     }
 
     async getIssue(repoName: string, issueTitle: string): Promise<Issue> {
