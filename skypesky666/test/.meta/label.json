@@ -1,1 +1,92 @@
-[{"id":6309321132,"node_id":"LA_kwDOK4Cls88AAAABeBCZrA","url":"https://api.github.com/repos/skypesky666/test/labels/bug","name":"bug","color":"d73a4a","default":true,"description":"Something isn't working"},{"id":6309321139,"node_id":"LA_kwDOK4Cls88AAAABeBCZsw","url":"https://api.github.com/repos/skypesky666/test/labels/documentation","name":"documentation","color":"0075ca","default":true,"description":"Improvements or additions to documentation"},{"id":6309321146,"node_id":"LA_kwDOK4Cls88AAAABeBCZug","url":"https://api.github.com/repos/skypesky666/test/labels/duplicate","name":"duplicate","color":"cfd3d7","default":true,"description":"This issue or pull request already exists"},{"id":6309321153,"node_id":"LA_kwDOK4Cls88AAAABeBCZwQ","url":"https://api.github.com/repos/skypesky666/test/labels/enhancement","name":"enhancement","color":"a2eeef","default":true,"description":"New feature or request"},{"id":6309321158,"node_id":"LA_kwDOK4Cls88AAAABeBCZxg","url":"https://api.github.com/repos/skypesky666/test/labels/good%20first%20issue","name":"good first issue","color":"7057ff","default":true,"description":"Good for newcomers"},{"id":6309321162,"node_id":"LA_kwDOK4Cls88AAAABeBCZyg","url":"https://api.github.com/repos/skypesky666/test/labels/help%20wanted","name":"help wanted","color":"008672","default":true,"description":"Extra attention is needed"},{"id":6309321165,"node_id":"LA_kwDOK4Cls88AAAABeBCZzQ","url":"https://api.github.com/repos/skypesky666/test/labels/invalid","name":"invalid","color":"e4e669","default":true,"description":"This doesn't seem right"},{"id":6336517431,"node_id":"LA_kwDOK4Cls88AAAABea-VNw","url":"https://api.github.com/repos/skypesky666/test/labels/my-label","name":"my-label","color":"0e8a16","default":false,"description":"good"},{"id":6309321166,"node_id":"LA_kwDOK4Cls88AAAABeBCZzg","url":"https://api.github.com/repos/skypesky666/test/labels/question","name":"question","color":"d876e3","default":true,"description":"Further information is requested"},{"id":6309321167,"node_id":"LA_kwDOK4Cls88AAAABeBCZzw","url":"https://api.github.com/repos/skypesky666/test/labels/wontfix","name":"wontfix","color":"ffffff","default":true,"description":"This will not be worked on"}]
+[
+    {
+        "id": 6309321132,
+        "node_id": "LA_kwDOK4Cls88AAAABeBCZrA",
+        "url": "https://api.github.com/repos/skypesky666/test/labels/bug",
+        "name": "bug",
+        "color": "d73a4a",
+        "default": true,
+        "description": "Something isn't working"
+    },
+    {
+        "id": 6309321139,
+        "node_id": "LA_kwDOK4Cls88AAAABeBCZsw",
+        "url": "https://api.github.com/repos/skypesky666/test/labels/documentation",
+        "name": "documentation",
+        "color": "0075ca",
+        "default": true,
+        "description": "Improvements or additions to documentation"
+    },
+    {
+        "id": 6309321146,
+        "node_id": "LA_kwDOK4Cls88AAAABeBCZug",
+        "url": "https://api.github.com/repos/skypesky666/test/labels/duplicate",
+        "name": "duplicate",
+        "color": "cfd3d7",
+        "default": true,
+        "description": "This issue or pull request already exists"
+    },
+    {
+        "id": 6309321153,
+        "node_id": "LA_kwDOK4Cls88AAAABeBCZwQ",
+        "url": "https://api.github.com/repos/skypesky666/test/labels/enhancement",
+        "name": "enhancement",
+        "color": "a2eeef",
+        "default": true,
+        "description": "New feature or request"
+    },
+    {
+        "id": 6309321158,
+        "node_id": "LA_kwDOK4Cls88AAAABeBCZxg",
+        "url": "https://api.github.com/repos/skypesky666/test/labels/good%20first%20issue",
+        "name": "good first issue",
+        "color": "7057ff",
+        "default": true,
+        "description": "Good for newcomers"
+    },
+    {
+        "id": 6309321162,
+        "node_id": "LA_kwDOK4Cls88AAAABeBCZyg",
+        "url": "https://api.github.com/repos/skypesky666/test/labels/help%20wanted",
+        "name": "help wanted",
+        "color": "008672",
+        "default": true,
+        "description": "Extra attention is needed"
+    },
+    {
+        "id": 6309321165,
+        "node_id": "LA_kwDOK4Cls88AAAABeBCZzQ",
+        "url": "https://api.github.com/repos/skypesky666/test/labels/invalid",
+        "name": "invalid",
+        "color": "e4e669",
+        "default": true,
+        "description": "This doesn't seem right"
+    },
+    {
+        "id": 6336517431,
+        "node_id": "LA_kwDOK4Cls88AAAABea-VNw",
+        "url": "https://api.github.com/repos/skypesky666/test/labels/my-label",
+        "name": "my-label",
+        "color": "0e8a16",
+        "default": false,
+        "description": "good"
+    },
+    {
+        "id": 6309321166,
+        "node_id": "LA_kwDOK4Cls88AAAABeBCZzg",
+        "url": "https://api.github.com/repos/skypesky666/test/labels/question",
+        "name": "question",
+        "color": "d876e3",
+        "default": true,
+        "description": "Further information is requested"
+    },
+    {
+        "id": 6309321167,
+        "node_id": "LA_kwDOK4Cls88AAAABeBCZzw",
+        "url": "https://api.github.com/repos/skypesky666/test/labels/wontfix",
+        "name": "wontfix",
+        "color": "ffffff",
+        "default": true,
+        "description": "This will not be worked on"
+    }
+]

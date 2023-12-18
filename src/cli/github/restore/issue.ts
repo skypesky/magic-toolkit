@@ -95,7 +95,4 @@ export class GithubIssueRestore extends AbstractGithubRestore {
         }
     }
 
-    async commentExists(repoName: string, comment: string): Promise<boolean> {
-        return false;
-    }
 }

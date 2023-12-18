@@ -67,6 +67,7 @@
     "node-fetch": "^3.3.2",
     "open": "^8.4.0",
     "p-all": "^5.0.0",
+    "prettier": "^3.1.1",
     "pretty-ms": "^8.0.0",
     "prompts": "^2.4.2",
     "shelljs.exec": "^1.1.8",

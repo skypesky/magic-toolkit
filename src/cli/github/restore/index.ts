@@ -8,6 +8,10 @@ import { GithubSettingsRestore } from "./settings";
 export class GithubRestore extends AbstractGithubRestore {
 
     async restore(): Promise<void> {
+
+        // ensureCreateRepository();
+
+
         const backups: AbstractGithubRestore[] = [
             new GithubIssueRestore(this.options),
             new GithubPullRequestRestore(this.options),

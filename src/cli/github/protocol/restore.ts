@@ -28,6 +28,10 @@ export interface IssueMeta extends RepositoryMeta {
     repoName: string;
 }
 
+export interface LabelMeta extends RepositoryMeta {
+    repoName: string;
+}
+
 export interface GithubRestoreOptions {
     // github 组织名称
     org: string;
@@ -65,6 +69,11 @@ export abstract class AbstractGithubRestore {
     }
 
     // TODO: 定义协议
+
+    getOrgPath(): string {
+        return join(this.options.dir, this.options.org);
+    }
+
     getRepoPath(repoName: string): string {
         return join(this.options.dir, this.options.org, repoName);
     }
@@ -127,6 +136,25 @@ export abstract class AbstractGithubRestore {
 
     getLabelPath(repoName: string): string {
         return join(this.getRepoPath(repoName), '.meta/label.json')
+    }
+
+   async findLabelMeta(): Promise<LabelMeta[]> {
+        const entryList: Entry[] = await FastGlob.async(`${this.getOrgPath()}/*/.meta/label.json`, {
+            onlyFiles: true,
+            absolute: true,
+            objectMode: true,
+            dot: true,
+        })
+
+        return entryList.map(entry => {
+
+            const repoName = entry.path.replaceAll(`${this.getOrgPath()}/`, '').replaceAll('/.meta/label.json', '');
+
+            return {
+                ...entry,
+                repoName,
+            }
+        });
     }
 
     getSettingsPath(repoName: string) {
