@@ -11,16 +11,18 @@ import { GithubPullRequestBackup } from './pull-request';
 import { GithubLabelBackup } from './lable';
 import { GithubSettingsBackup } from './settings';
 import { GithubCodeBackup } from './code';
+import { GithubMilestoneBackup } from './milestone';
 
 export class GithubBackup extends AbstractGithubBackup {
 
   async backup() {
     const backups: AbstractGithubBackup[] = [
+      new GithubCodeBackup(this.options),
+      new GithubMilestoneBackup(this.options),
+      new GithubLabelBackup(this.options),
       new GithubIssueBackup(this.options),
       new GithubPullRequestBackup(this.options),
-      new GithubLabelBackup(this.options),
       new GithubSettingsBackup(this.options),
-      new GithubCodeBackup(this.options)
     ]
 
     await Promise.all(

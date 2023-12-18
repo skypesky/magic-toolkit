@@ -1,0 +1,39 @@
+[
+  {
+    "url": "https://api.github.com/repos/skypesky666/test/milestones/1",
+    "html_url": "https://github.com/skypesky666/test/milestone/1",
+    "labels_url": "https://api.github.com/repos/skypesky666/test/milestones/1/labels",
+    "id": 10325032,
+    "node_id": "MI_kwDOK7JXs84AnYwo",
+    "number": 1,
+    "title": "test-milestone",
+    "description": "dddd",
+    "creator": {
+      "login": "skypesky",
+      "id": 33124160,
+      "node_id": "MDQ6VXNlcjMzMTI0MTYw",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33124160?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/skypesky",
+      "html_url": "https://github.com/skypesky",
+      "followers_url": "https://api.github.com/users/skypesky/followers",
+      "following_url": "https://api.github.com/users/skypesky/following{/other_user}",
+      "gists_url": "https://api.github.com/users/skypesky/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/skypesky/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/skypesky/subscriptions",
+      "organizations_url": "https://api.github.com/users/skypesky/orgs",
+      "repos_url": "https://api.github.com/users/skypesky/repos",
+      "events_url": "https://api.github.com/users/skypesky/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/skypesky/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "open_issues": 1,
+    "closed_issues": 0,
+    "state": "open",
+    "created_at": "2023-12-18T15:31:50Z",
+    "updated_at": "2023-12-18T15:45:35Z",
+    "due_on": "2023-12-28T08:00:00Z",
+    "closed_at": null
+  }
+]

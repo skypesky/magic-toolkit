@@ -19,7 +19,6 @@ export class GithubMilestoneRestore extends AbstractGithubRestore {
             })
         );
 
-        return null;
     }
 
 
@@ -51,9 +50,9 @@ export class GithubMilestoneRestore extends AbstractGithubRestore {
                 owner: this.options.org,
                 repo: repoName,
             });
-            const labelExists = milestones.data.some(x => x.title === milestoneName);
+            const exists = milestones.data.some(x => x.title === milestoneName);
 
-            return labelExists;
+            return exists;
         } catch (error) {
             console.error(error);
             return false;

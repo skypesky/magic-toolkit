@@ -29,6 +29,7 @@ export class GithubIssueRestore extends AbstractGithubRestore {
         const issueData: MyIssue = await fs.readJSON(issueMeta.path);
         // 如果创建过了 issue 就不创建了
         const exists = await this.issueExists(issueMeta.repoName, issueData.title);
+        console.log('issue.title', issueData.title)
         if (!exists) {
             await this.octokit.issues.create({
                 owner: this.options.org,
@@ -38,7 +39,7 @@ export class GithubIssueRestore extends AbstractGithubRestore {
                 labels: issueData.labels,
                 milestone: issueData.milestone.title,
                 assignees: issueData.assignees.map(x => x.login)
-            })
+            });
         }
 
         const issue: Issue = await this.getIssue(issueMeta.repoName, issueData.title);
