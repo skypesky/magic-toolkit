@@ -1,21 +1,21 @@
 import { Command } from "commander";
-import { GithubBackup } from "./backup/index";
+import { GithubRestore } from "./restore/index";
 
 function restoreCommand(): Command {
     const command = new Command();
 
     command
-        .name("backup")
+        .name("restore")
         .requiredOption("-o, --org <org>", "Organization name")
         .requiredOption("-t, --token <token>", "Personal token")
-        .description("Backup github repo")
+        .description("Restore github repo")
         .action(async (options: Record<string, any>) => {
 
             const org = options.org;
             const token = options.token;
 
             if (org && token) {
-                return new GithubBackup({ org, token }).backup();
+                return new GithubRestore({ org, token }).restore();
             }
 
             return command.help();
