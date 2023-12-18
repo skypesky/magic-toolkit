@@ -1,4 +1,5 @@
-import { AbstractGithubRestore } from "../protocol/restore";
+import pAll from "p-all";
+import { AbstractGithubRestore, RepositoryMeta } from "../protocol/restore";
 import { GithubCodeRestore } from "./code";
 import { GithubIssueRestore } from "./issue";
 import { GithubLabelRestore } from "./label";
@@ -8,7 +9,7 @@ export class GithubRestore extends AbstractGithubRestore {
 
     async restore(): Promise<void> {
 
-        // ensureCreateRepository();
+        await this.ensureAllRepositoryCreated();
 
         const backups: AbstractGithubRestore[] = [
             new GithubIssueRestore(this.options),
@@ -22,4 +23,50 @@ export class GithubRestore extends AbstractGithubRestore {
         );
     }
 
+    async ensureAllRepositoryCreated(): Promise<void> {
+
+        const findRepoMetas = await this.findRepoMeta();
+
+        await pAll(
+            findRepoMetas.map(x => {
+                return async () => {
+                    return this.ensureRepositoryCreated(x);
+                }
+            })
+        );
+
+        return null;
+    }
+
+    async ensureRepositoryCreated(repoMeta: RepositoryMeta): Promise<void> {
+        try {
+            const { data: existingRepo } = await this.octokit.repos.get({
+                owner: this.options.org,
+                repo: repoMeta.name,
+            });
+            if (!existingRepo) {
+                await this.octokit.repos.createInOrg({
+                    org: this.options.org,
+                    name: repoMeta.name,
+                });
+            }
+        } catch (error) {
+            if (error.status === 404) {
+                // 如果仓库不存在，则创建仓库
+                await this.octokit.repos.createInOrg({
+                    org: this.options.org,
+                    name: repoMeta.name,
+                });
+
+                console.log(`Repository '${repoMeta.name}' created successfully in the organization '${this.options.org}'.`, {
+                    org: this.options.org,
+                    name: repoMeta.name,
+                });
+            } else {
+                // 如果发生其他错误，则输出错误信息
+                console.error('Error checking or creating repository:', error.message);
+                return;
+            }
+        }
+    }
 }
