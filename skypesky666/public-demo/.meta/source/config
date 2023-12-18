@@ -11,6 +11,3 @@
 [remote "github"]
 	url = https://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@github.com/skypesky666/public-demo.git
 	fetch = +refs/heads/*:refs/remotes/github/*
-[branch "main"]
-	remote = github
-	merge = refs/heads/main

@@ -14,7 +14,7 @@ export class GithubRestore extends AbstractGithubRestore {
         await new GithubLabelRestore(this.options).restore();
         await new GithubMilestoneRestore(this.options).restore();
         await new GithubIssueRestore(this.options).restore();
-        // await new GithubSettingsRestore(this.options).restore();
+        await new GithubSettingsRestore(this.options).restore();
     }
 
     async ensureAllRepositoryCreated(): Promise<void> {
