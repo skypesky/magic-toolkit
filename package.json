@@ -71,6 +71,7 @@
     "pretty-ms": "^8.0.0",
     "prompts": "^2.4.2",
     "shelljs.exec": "^1.1.8",
+    "simple-git": "^3.21.0",
     "url-join": "4.0.1",
     "xbytes": "^1.8.0"
   },

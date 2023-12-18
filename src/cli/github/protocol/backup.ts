@@ -52,7 +52,7 @@ export abstract class AbstractGithubBackup {
     }
 
     getCodePath(repoName: string): string {
-        return join(this.getRepoPath(repoName), '.meta/source.tar.gz')
+        return join(this.getRepoPath(repoName), '.meta/source/')
     }
 
     getLabelPath(repoName: string): string {

@@ -1,9 +1,10 @@
-import fs from 'fs-extra';
+import fs, { existsSync, remove } from 'fs-extra';
 import { cpus } from 'os';
 import pAll from 'p-all';
 import got from 'got';
 import { pipeline } from 'stream/promises';
 import { AbstractGithubBackup } from '../protocol';
+import simpleGit from 'simple-git';
 
 export class GithubCodeBackup extends AbstractGithubBackup {
 
@@ -26,14 +27,21 @@ export class GithubCodeBackup extends AbstractGithubBackup {
   }
 
   async backupCode(repoName: string): Promise<void> {
-    const response = await this.octokit.repos.downloadTarballArchive({
-      owner: this.options.org,
-      repo: repoName,
-      ref: undefined
-    });
+    const repoPath = `https://${this.options.token}@github.com/${this.options.org}/${repoName}.git`;
+    const localCodePath = this.getCodePath(repoName);
 
-    const stream = await got.stream(response.url)
-    await pipeline(stream, fs.createWriteStream(this.getCodePath(repoName)));
+    try {
+
+      if (existsSync(localCodePath)) {
+        await remove(localCodePath)
+      }
+
+      // Clone private repository with token
+      await simpleGit().clone(repoPath, localCodePath, ['--mirror']);
+      console.log(`Repository '${repoName}' backed up to: ${localCodePath}`);
+    } catch (error) {
+      console.error('Error during backup:', error.message);
+    }
   }
 
 }

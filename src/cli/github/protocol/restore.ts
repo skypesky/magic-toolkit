@@ -36,6 +36,10 @@ export interface SettingsMeta extends RepositoryMeta {
     repoName: string;
 }
 
+export interface CodeMeta extends RepositoryMeta {
+    repoName: string;
+}
+
 export interface GithubRestoreOptions {
     // github 组织名称
     org: string;
@@ -124,9 +128,6 @@ export abstract class AbstractGithubRestore {
         return issueMetas;
     }
 
-    getPullRequestPath(repoName: string, issueNumber: number) {
-        return join(this.getRepoPath(repoName), `.meta/pull/${issueNumber}.json`)
-    }
 
     async findPullRequestMeta(): Promise<IssueMeta[]> {
 
@@ -157,15 +158,29 @@ export abstract class AbstractGithubRestore {
         return issueMetas;
     }
 
-    getCodePath(repoName: string): string {
-        return join(this.getRepoPath(repoName), '.meta/source.tar.gz')
+    async findCodeMeta(): Promise<CodeMeta[]> {
+        const entryList: Entry[] = await FastGlob.async(`${this.options.org}/**/.meta/source/`, {
+            cwd: this.options.dir,
+            onlyDirectories: true,
+            absolute: true,
+            objectMode: true,
+            markDirectories: true
+        });
+
+
+        return entryList.map(entry => {
+
+            const repoName = entry.path.replaceAll(`${this.getOrgPath()}/`, '').replaceAll('/.meta/source/', '');
+
+            return {
+                ...entry,
+                repoName,
+            }
+        });
     }
 
-    getLabelPath(repoName: string): string {
-        return join(this.getRepoPath(repoName), '.meta/label.json')
-    }
 
-   async findLabelMeta(): Promise<LabelMeta[]> {
+    async findLabelMeta(): Promise<LabelMeta[]> {
         const entryList: Entry[] = await FastGlob.async(`${this.getOrgPath()}/*/.meta/label.json`, {
             onlyFiles: true,
             absolute: true,
