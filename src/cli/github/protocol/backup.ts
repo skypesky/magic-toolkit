@@ -59,6 +59,10 @@ export abstract class AbstractGithubBackup {
         return join(this.getRepoPath(repoName), '.meta/label.json')
     }
 
+    getMilestonePath(repoName: string): string {
+        return join(this.getRepoPath(repoName), '.meta/milestone.json')
+    }
+
     getSettingsPath(repoName: string) {
         return join(this.getRepoPath(repoName), `.meta/settings.json`)
     }

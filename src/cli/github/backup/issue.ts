@@ -37,13 +37,12 @@ export class GithubIssueBackup extends AbstractGithubBackup {
                 return async () => {
 
                     const org = this.options.org;
-                    const {data: comments} = await this.octokit.issues.listComments({
+                    const { data: comments } = await this.octokit.issues.listComments({
                         owner: org,
                         repo: repoName,
                         issue_number: issue.number,
                     })
 
-                    // TODO: 自定义类型
                     const data = { ...issue, extra: { comments } }
                     const issuePath = this.getIssuePath(repoName, issue.number)
 

@@ -36,8 +36,7 @@ export class GithubIssueRestore extends AbstractGithubRestore {
                 title: issueData.title,
                 body: issueData.body,
                 labels: issueData.labels,
-                // TODO: 可以考虑支持
-                // milestone: issue.milestone,
+                milestone: issueData.milestone.title,
                 assignees: issueData.assignees.map(x => x.login)
             })
         }
@@ -49,7 +48,7 @@ export class GithubIssueRestore extends AbstractGithubRestore {
             issue_number: issue.number,
         });
 
-        const commentsData = issueData.extra.comments;
+        const commentsData = issueData.extra.comments.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
         await pAll(
             commentsData.map(comment => {
                 return async () => {

@@ -4,23 +4,17 @@ import { GithubCodeRestore } from "./code";
 import { GithubIssueRestore } from "./issue";
 import { GithubLabelRestore } from "./label";
 import { GithubSettingsRestore } from "./settings";
+import { GithubMilestoneRestore } from "./milestone";
 
 export class GithubRestore extends AbstractGithubRestore {
 
     async restore(): Promise<void> {
-
         await this.ensureAllRepositoryCreated();
-
-        const backups: AbstractGithubRestore[] = [
-            new GithubIssueRestore(this.options),
-            new GithubLabelRestore(this.options),
-            new GithubSettingsRestore(this.options),
-            new GithubCodeRestore(this.options)
-        ]
-
-        await Promise.all(
-            backups.map(x => x.restore())
-        );
+        await new GithubCodeRestore(this.options).restore();
+        await new GithubLabelRestore(this.options).restore();
+        await new GithubMilestoneRestore(this.options).restore();
+        await new GithubIssueRestore(this.options).restore();
+        await new GithubSettingsRestore(this.options).restore();
     }
 
     async ensureAllRepositoryCreated(): Promise<void> {

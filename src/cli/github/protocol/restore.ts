@@ -32,6 +32,10 @@ export interface LabelMeta extends RepositoryMeta {
     repoName: string;
 }
 
+export interface MilestoneMeta extends RepositoryMeta {
+    repoName: string;
+}
+
 export interface SettingsMeta extends RepositoryMeta {
     repoName: string;
 }
@@ -191,6 +195,25 @@ export abstract class AbstractGithubRestore {
         return entryList.map(entry => {
 
             const repoName = entry.path.replaceAll(`${this.getOrgPath()}/`, '').replaceAll('/.meta/label.json', '');
+
+            return {
+                ...entry,
+                repoName,
+            }
+        });
+    }
+
+    async findMilestoneMeta(): Promise<MilestoneMeta[]> {
+        const entryList: Entry[] = await FastGlob.async(`${this.getOrgPath()}/*/.meta/milestone.json`, {
+            onlyFiles: true,
+            absolute: true,
+            objectMode: true,
+            dot: true,
+        })
+
+        return entryList.map(entry => {
+
+            const repoName = entry.path.replaceAll(`${this.getOrgPath()}/`, '').replaceAll('/.meta/milestone.json', '');
 
             return {
                 ...entry,

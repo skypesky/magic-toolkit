@@ -43,7 +43,6 @@ export class GithubPullRequestBackup extends AbstractGithubBackup {
                         issue_number: pullRequest.number,
                     })
 
-                    // TODO: 自定义类型
                     const data = { ...pullRequest, extra: { comments } }
                     const pullRequestPath = this.getPullRequestPath(repoName, pullRequest.number)
 

@@ -1,0 +1,16 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+	ignorecase = true
+	precomposeunicode = true
+[remote "origin"]
+	url = https://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@github.com/skypesky666/public-demo.git
+	fetch = +refs/*:refs/*
+	mirror = true
+[remote "github"]
+	url = https://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@github.com/skypesky666/public-demo.git
+	fetch = +refs/heads/*:refs/remotes/github/*
+[branch "main"]
+	remote = github
+	merge = refs/heads/main
