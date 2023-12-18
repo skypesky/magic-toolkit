@@ -5,7 +5,7 @@ import pAll from 'p-all';
 import { dirname } from 'path';
 import { AbstractGithubBackup } from '../protocol';
 
-export class GithubIssueBackup extends AbstractGithubBackup {
+export class GithubPullRequestBackup extends AbstractGithubBackup {
 
     async backup() {
         const { org } = this.options;
@@ -16,7 +16,7 @@ export class GithubIssueBackup extends AbstractGithubBackup {
         await pAll(
             repos.data.map(repo => {
                 return async () => {
-                    await this.backupIssues(repo.name);
+                    await this.backupPullRequests(repo.name);
                 }
             }),
             {
@@ -25,30 +25,30 @@ export class GithubIssueBackup extends AbstractGithubBackup {
         );
     }
 
-    async backupIssues(repoName: string): Promise<void> {
+    async backupPullRequests(repoName: string): Promise<void> {
 
-        const issues: RestEndpointMethodTypes["issues"]["listForRepo"]["response"] = await this.octokit.issues.listForRepo({
+        const pullRequests: RestEndpointMethodTypes['pulls']["list"]["response"] = await this.octokit.pulls.list({
             owner: this.options.org,
-            repo: repoName,
-        });
+            repo: repoName
+        })
 
         await pAll(
-            issues.data.filter(x => !x.pull_request).map(issue => {
+            pullRequests.data.map(pullRequest => {
                 return async () => {
 
                     const org = this.options.org;
                     const comments = await this.octokit.issues.listComments({
                         owner: org,
                         repo: repoName,
-                        issue_number: issue.number,
+                        issue_number: pullRequest.number,
                     })
 
                     // TODO: 自定义类型
-                    const data = { ...issue, extra: { comments } }
-                    const issuePath = this.getIssuePath(repoName, issue.number)
+                    const data = { ...pullRequest, extra: { comments } }
+                    const pullRequestPath = this.getPullRequestPath(repoName, pullRequest.number)
 
-                    await fs.ensureDir(dirname(issuePath))
-                    await fs.writeJson(issuePath, data);
+                    await fs.ensureDir(dirname(pullRequestPath))
+                    await fs.writeJson(pullRequestPath, data);
                 }
             }), {
             concurrency: cpus().length,
@@ -56,3 +56,5 @@ export class GithubIssueBackup extends AbstractGithubBackup {
     }
 
 }
+
+

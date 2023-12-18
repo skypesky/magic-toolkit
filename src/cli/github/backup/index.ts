@@ -1,111 +1,35 @@
-import { Octokit, RestEndpointMethodTypes } from '@octokit/rest';
+import { RestEndpointMethodTypes } from '@octokit/rest';
 import fs from 'fs-extra';
-import fetch from 'node-fetch';
 import { cpus } from 'os';
 import pAll from 'p-all';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 import got from 'got';
 import { pipeline } from 'stream/promises';
+import { AbstractGithubBackup } from '../protocol';
+import { GithubIssueBackup } from './issue';
+import { GithubPullRequestBackup } from './pull-request';
+import { GithubLabelBackup } from './lable';
+import { GithubSettingsBackup } from './settings';
+import { GithubCodeBackup } from './code';
 
-export interface GithubBackupOptions {
-  // github 组织名称
-  org: string;
-
-  // github personal token
-  token: string;
-
-  /**
-   * @description 
-   * @default process.cwd()
-   * @type {string}
-   * @memberof GithubBackupOptions
-   */
-  dir?: string;
-}
-
-export class GithubBackup {
-
-  readonly options: GithubBackupOptions;
-  readonly octokit: Octokit;
-
-  constructor(options: GithubBackupOptions) {
-    this.options = {
-      dir: process.cwd(),
-      ...options
-    };
-    this.octokit = new Octokit({
-      auth: this.options.token, // 请替换为你的个人访问令牌
-      request: {
-        fetch
-      }
-    });
-  }
+export class GithubBackup extends AbstractGithubBackup {
 
   async backup() {
-    const { org } = this.options;
-    const repos = await this.octokit.repos.listForOrg({
-      org: org
-    });
 
-    await pAll(
-      repos.data.map(repo => {
-        return async () => {
+    const backups: AbstractGithubBackup[] = [
+      new GithubIssueBackup(this.options),
+      new GithubPullRequestBackup(this.options),
+      new GithubLabelBackup(this.options),
+      new GithubSettingsBackup(this.options),
+      new GithubCodeBackup(this.options)
+    ]
 
-          const repoName = repo.name;
-
-          const issues: RestEndpointMethodTypes["issues"]["listForRepo"]["response"] = await this.octokit.issues.listForRepo({
-            owner: org,
-            repo: repoName,
-          });
-
-          await this.backupIssues(repoName, issues);
-
-          const pullRequests: RestEndpointMethodTypes['pulls']["list"]["response"] = await this.octokit.pulls.list({
-            owner: org,
-            repo: repoName
-          })
-          await this.backupPullRequests(repoName, pullRequests)
-
-          const settings: RestEndpointMethodTypes["repos"]["get"]["response"] = await this.octokit.repos.get({
-            owner: org,
-            repo: repoName,
-          });
-
-          await this.backupSettings(settings);
-
-          await this.backupCode(repoName);
-          await this.backupLabel(repoName);
-        }
-      }),
-      {
-        concurrency: cpus().length,
-      }
+    await Promise.all(
+      backups.map(x => x.backup())
     );
   }
 
-  getRepoPath(repoName: string): string {
-    return join(this.options.dir, this.options.org, repoName);
-  }
 
-  getIssuePath(repoName: string, issueNumber: number) {
-    return join(this.getRepoPath(repoName), `.meta/issue/${issueNumber}.json`)
-  }
-
-  getPullRequestPath(repoName: string, issueNumber: number) {
-    return join(this.getRepoPath(repoName), `.meta/pull/${issueNumber}.json`)
-  }
-
-  getCodePath(repoName: string): string {
-    return join(this.getRepoPath(repoName), '.meta/source.tar.gz')
-  }
-
-  getLabelPath(repoName: string): string {
-    return join(this.getRepoPath(repoName), '.meta/label.json')
-  }
-
-  getSettingsPath(repoName: string) {
-    return join(this.getRepoPath(repoName), `.meta/settings.json`)
-  }
 
   async backupIssues(repoName: string, issues: RestEndpointMethodTypes["issues"]["listForRepo"]["response"]): Promise<void> {
     await pAll(
