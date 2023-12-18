@@ -32,6 +32,10 @@ export interface LabelMeta extends RepositoryMeta {
     repoName: string;
 }
 
+export interface SettingsMeta extends RepositoryMeta {
+    repoName: string;
+}
+
 export interface GithubRestoreOptions {
     // github 组织名称
     org: string;
@@ -182,5 +186,24 @@ export abstract class AbstractGithubRestore {
 
     getSettingsPath(repoName: string) {
         return join(this.getRepoPath(repoName), `.meta/settings.json`)
+    }
+
+    async findSettingsMetas(): Promise<SettingsMeta[]> {
+        const entryList: Entry[] = await FastGlob.async(`${this.getOrgPath()}/*/.meta/settings.json`, {
+            onlyFiles: true,
+            absolute: true,
+            objectMode: true,
+            dot: true,
+        })
+
+        return entryList.map(entry => {
+
+            const repoName = entry.path.replaceAll(`${this.getOrgPath()}/`, '').replaceAll('/.meta/settings.json', '');
+
+            return {
+                ...entry,
+                repoName,
+            }
+        });
     }
 }

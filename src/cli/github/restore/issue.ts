@@ -23,7 +23,6 @@ export class GithubIssueRestore extends AbstractGithubRestore {
             concurrency: cpus().length,
         });
 
-        return null;
     }
 
     async restoreIssue(issueMeta: IssueMeta): Promise<void> {
