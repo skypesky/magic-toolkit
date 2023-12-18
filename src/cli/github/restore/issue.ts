@@ -7,10 +7,7 @@ import fs from 'fs-extra';
 export type Issue = RestEndpointMethodTypes["issues"]["get"]["response"]['data'];
 export type MyIssue = Issue & {
     extra: {
-        comments: {
-            // TODO: 这个结构不优雅,需要修改一下
-            data: Array<RestEndpointMethodTypes["issues"]["createComment"]["response"]['data']>
-        }
+        comments: Array<RestEndpointMethodTypes["issues"]["createComment"]["response"]['data']>
     }
 }
 
@@ -53,7 +50,7 @@ export class GithubIssueRestore extends AbstractGithubRestore {
             issue_number: issue.number,
         });
 
-        const commentsData = issueData.extra.comments.data;
+        const commentsData = issueData.extra.comments;
         await pAll(
             commentsData.map(comment => {
                 return async () => {
