@@ -4,6 +4,8 @@ import fetch from 'node-fetch';
 import { cpus } from 'os';
 import pAll from 'p-all';
 import { dirname, join } from 'path';
+import got from 'got';
+import { pipeline } from 'stream/promises';
 
 export interface GithubBackupOptions {
   // github 组织名称
@@ -70,6 +72,9 @@ export class GithubBackup {
           });
 
           await this.backupSettings(settings);
+
+          await this.backupCode(repoName);
+          await this.backupLabel(repoName);
         }
       }),
       {
@@ -88,6 +93,14 @@ export class GithubBackup {
 
   getPullRequestPath(repoName: string, issueNumber: number) {
     return join(this.getRepoPath(repoName), `.meta/pull/${issueNumber}.json`)
+  }
+
+  getCodePath(repoName: string): string {
+    return join(this.getRepoPath(repoName), '.meta/source.tar.gz')
+  }
+
+  getLabelPath(repoName: string): string {
+    return join(this.getRepoPath(repoName), '.meta/label.json')
   }
 
   getSettingsPath(repoName: string) {
@@ -147,5 +160,30 @@ export class GithubBackup {
 
     await fs.ensureDir(dirname(settingsPath))
     await fs.writeJson(settingsPath, settings.data);
+  }
+
+
+  async backupCode(repoName: string): Promise<void> {
+    const response = await this.octokit.repos.downloadTarballArchive({
+      owner: this.options.org,
+      repo: repoName,
+      ref: undefined
+    });
+
+    const stream = await got.stream(response.url)
+    await pipeline(stream, fs.createWriteStream(this.getCodePath(repoName)));
+  }
+
+
+  async backupLabel(repoName: string): Promise<void> {
+    const response = await this.octokit.issues.listLabelsForRepo({
+      owner: this.options.org,
+      repo: repoName,
+    });
+
+    const labelPath: string = this.getLabelPath(repoName);
+
+    await fs.ensureDir(dirname(labelPath))
+    await fs.writeJson(labelPath, response.data)
   }
 }
