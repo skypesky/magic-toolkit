@@ -1,7 +1,7 @@
 import { existsSync, remove } from 'fs-extra';
 import { cpus } from 'os';
 import pAll from 'p-all';
-import { AbstractGithubBackup, Repo } from '../protocol';
+import { AbstractGithubBackup, Repository } from '../protocol';
 import simpleGit from 'simple-git';
 
 export class GithubCodeBackup extends AbstractGithubBackup {
@@ -15,7 +15,7 @@ export class GithubCodeBackup extends AbstractGithubBackup {
     await pAll(
       repos.data.map(repo => {
         return async () => {
-          await this.backupRepository(repo);
+          await this.backupRepository(repo.name);
         }
       }),
       {
@@ -24,9 +24,8 @@ export class GithubCodeBackup extends AbstractGithubBackup {
     );
   }
 
-  async backupRepository(repo: Repo): Promise<void> {
+  async backupRepository(repoName: string): Promise<void> {
 
-    const repoName = repo.name;
     const repoPath = `https://${this.options.token}@github.com/${this.options.org}/${repoName}.git`;
     const localCodePath = this.getCodePath(repoName);
 

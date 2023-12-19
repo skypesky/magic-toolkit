@@ -18,7 +18,7 @@ export interface GithubBackupOptions {
     dir?: string;
 }
 
-export type Repo = RestEndpointMethodTypes["repos"]["listForOrg"]["response"]['data'][0];
+export type Repository = RestEndpointMethodTypes["repos"]["listForOrg"]["response"]['data'][0];
 
 
 export abstract class AbstractGithubBackup {
@@ -27,7 +27,7 @@ export abstract class AbstractGithubBackup {
     readonly octokit: Octokit;
 
     abstract backup(): Promise<void>;
-    abstract backupRepository(repo: Repo): Promise<void>;
+    abstract backupRepository(repoName: string): Promise<void>;
 
     constructor(options: GithubBackupOptions) {
         this.options = {

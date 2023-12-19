@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { cpus } from 'os';
 import pAll from 'p-all';
 import { dirname } from 'path';
-import { AbstractGithubBackup, Repo } from '../protocol';
+import { AbstractGithubBackup, Repository } from '../protocol';
 
 export class GithubLabelBackup extends AbstractGithubBackup {
 
@@ -14,7 +14,7 @@ export class GithubLabelBackup extends AbstractGithubBackup {
         await pAll(
             repos.data.map(repo => {
                 return async () => {
-                    await this.backupRepository(repo);
+                    await this.backupRepository(repo.name);
                 }
             }),
             {
@@ -23,9 +23,8 @@ export class GithubLabelBackup extends AbstractGithubBackup {
         );
     }
 
-    async backupRepository(repo: Repo): Promise<void> {
+    async backupRepository(repoName: string): Promise<void> {
 
-        const repoName = repo.name;
         const response = await this.octokit.issues.listLabelsForRepo({
             owner: this.options.org,
             repo: repoName,

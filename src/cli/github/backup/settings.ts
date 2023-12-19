@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import { cpus } from 'os';
 import pAll from 'p-all';
 import { dirname } from 'path';
-import { AbstractGithubBackup, Repo } from '../protocol';
+import { AbstractGithubBackup } from '../protocol';
 
 export class GithubSettingsBackup extends AbstractGithubBackup {
 
@@ -15,7 +15,7 @@ export class GithubSettingsBackup extends AbstractGithubBackup {
         await pAll(
             repos.data.map(repo => {
                 return async () => {
-                    await this.backupRepository(repo);
+                    await this.backupRepository(repo.name);
                 }
             }),
             {
@@ -24,9 +24,8 @@ export class GithubSettingsBackup extends AbstractGithubBackup {
         );
     }
 
-    async backupRepository(repo: Repo): Promise<void> {
+    async backupRepository(repoName: string): Promise<void> {
 
-        const repoName = repo.name;
         const settings: RestEndpointMethodTypes["repos"]["get"]["response"] = await this.octokit.repos.get({
             owner: this.options.org,
             repo: repoName,
