@@ -1,19 +1,16 @@
 import { existsSync, remove } from 'fs-extra';
 import { cpus } from 'os';
 import pAll from 'p-all';
-import { AbstractGithubBackup, Repository } from '../protocol';
+import { AbstractGithubBackup } from '../protocol';
 import simpleGit from 'simple-git';
 
 export class GithubCodeBackup extends AbstractGithubBackup {
 
   async backup() {
-    const { org } = this.options;
-    const repos = await this.octokit.repos.listForOrg({
-      org: org
-    });
+    const repos = await this.listForOrg();
 
     await pAll(
-      repos.data.map(repo => {
+      repos.map(repo => {
         return async () => {
           await this.backupRepository(repo.name);
         }

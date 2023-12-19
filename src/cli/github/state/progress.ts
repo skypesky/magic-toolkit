@@ -48,8 +48,6 @@ export class ReposBackupProgress {
       count: 0,
     });
 
-    console.log('init 1', this.db.data.repos);
-
     if (!this.db.data.repos.length) {
       this.db.data.createdAt = new Date().toISOString();
       this.db.data.repos.push(...repos);

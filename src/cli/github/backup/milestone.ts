@@ -7,13 +7,10 @@ import { AbstractGithubBackup } from '../protocol';
 export class GithubMilestoneBackup extends AbstractGithubBackup {
 
     async backup() {
-        const { org } = this.options;
-        const repos = await this.octokit.repos.listForOrg({
-            org: org
-        });
+        const repos = await this.listForOrg();
 
         await pAll(
-            repos.data.map(repo => {
+            repos.map(repo => {
                 return async () => {
                     await this.backupRepository(repo.name);
                 }

@@ -2,17 +2,15 @@ import fs from 'fs-extra';
 import { cpus } from 'os';
 import pAll from 'p-all';
 import { dirname } from 'path';
-import { AbstractGithubBackup, Repository } from '../protocol';
+import { AbstractGithubBackup } from '../protocol';
 
 export class GithubLabelBackup extends AbstractGithubBackup {
 
     async backup() {
-        const repos = await this.octokit.repos.listForOrg({
-            org: this.options.org
-        });
+        const repos = await this.listForOrg();
 
         await pAll(
-            repos.data.map(repo => {
+            repos.map(repo => {
                 return async () => {
                     await this.backupRepository(repo.name);
                 }

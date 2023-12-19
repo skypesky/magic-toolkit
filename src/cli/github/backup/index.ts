@@ -10,17 +10,20 @@ import { ReposBackupProgress } from '../state';
 export class GithubBackup extends AbstractGithubBackup {
 
   async backup() {
-    const { data } = await this.octokit.repos.listForOrg({
-      org: this.options.org,
-    });
+    const repositoryList = await this.listForOrg();
 
     const progress = new ReposBackupProgress(this.options);
-    await progress.init(data.map(x => {
+    await progress.init(repositoryList.map(x => {
       return {
         name: x.name
       }
     }));
-    const repos = await progress.findRemaining();
+    const repos = [{ name: 'blocklet-server' }] || await progress.findRemaining();
+
+    console.log({
+      repositoryListLen: repositoryList.length
+    })
+
 
     for (const repo of repos) {
       try {

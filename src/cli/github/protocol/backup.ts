@@ -1,6 +1,7 @@
 import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import { join } from "path";
 import fetch from 'node-fetch';
+import { Repo } from "../state";
 
 export interface GithubBackupOptions {
     // github 组织名称
@@ -26,6 +27,8 @@ export abstract class AbstractGithubBackup {
     readonly options: GithubBackupOptions;
     readonly octokit: Octokit;
 
+    private repos: Repo[] = [];
+
     abstract backup(): Promise<void>;
     abstract backupRepository(repoName: string): Promise<void>;
 
@@ -40,6 +43,22 @@ export abstract class AbstractGithubBackup {
                 fetch
             }
         });
+    }
+
+    async listForOrg(): Promise<Repo[]> {
+        if (this.repos.length) {
+            return this.repos;
+        }
+
+        const data = await this.octokit.paginate(this.octokit.repos.listForOrg, {
+            org: this.options.org,
+            per_page: 100, // 每页返回的仓库数量，最大为 100
+            type: "all"
+        });
+
+        this.repos = data;
+
+        return this.repos;
     }
 
     getRepoPath(repoName: string): string {

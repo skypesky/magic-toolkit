@@ -8,12 +8,10 @@ import { AbstractGithubBackup } from '../protocol';
 export class GithubSettingsBackup extends AbstractGithubBackup {
 
     async backup() {
-        const repos = await this.octokit.repos.listForOrg({
-            org: this.options.org
-        });
+        const repos = await this.listForOrg();
 
         await pAll(
-            repos.data.map(repo => {
+            repos.map(repo => {
                 return async () => {
                     await this.backupRepository(repo.name);
                 }
