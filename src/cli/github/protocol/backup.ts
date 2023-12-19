@@ -47,22 +47,22 @@ export abstract class AbstractGithubBackup {
     }
 
     getIssuePath(repoName: string, issueNumber: number) {
-        return join(this.getRepoPath(repoName), `.meta/issue/${issueNumber}.json`)
+        return join(this.getRepoPath(repoName), `issue/${issueNumber}.json`)
     }
 
     getCodePath(repoName: string): string {
-        return join(this.getRepoPath(repoName), '.meta/source/')
+        return join(this.getRepoPath(repoName), 'source/')
     }
 
     getLabelPath(repoName: string): string {
-        return join(this.getRepoPath(repoName), '.meta/label.json')
+        return join(this.getRepoPath(repoName), 'label.json')
     }
 
     getMilestonePath(repoName: string): string {
-        return join(this.getRepoPath(repoName), '.meta/milestone.json')
+        return join(this.getRepoPath(repoName), 'milestone.json')
     }
 
     getSettingsPath(repoName: string) {
-        return join(this.getRepoPath(repoName), `.meta/settings.json`)
+        return join(this.getRepoPath(repoName), `settings.json`)
     }
 }

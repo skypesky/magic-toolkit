@@ -89,7 +89,7 @@ export abstract class AbstractGithubRestore {
     }
 
     async findIssueMeta(repoName: string): Promise<IssueMeta[]> {
-        const entryList = await FastGlob.async(`${this.getRepoPath(repoName)}/.meta/issue/**`, {
+        const entryList = await FastGlob.async(`${this.getRepoPath(repoName)}/issue/**`, {
             deep: 1,
             absolute: true,
             objectMode: true,
@@ -107,7 +107,7 @@ export abstract class AbstractGithubRestore {
 
     async getCodeMeta(repoName: string): Promise<CodeMeta> {
 
-        const path = join(this.options.dir, this.options.org, repoName, '.meta/source/');
+        const path = join(this.options.dir, this.options.org, repoName, 'source/');
 
         if (!await pathExists(path)) {
             throw new Error('Can not find code path: ' + path);
@@ -122,7 +122,7 @@ export abstract class AbstractGithubRestore {
 
     async getLabelMeta(repoName: string): Promise<LabelMeta> {
 
-        const path: string = join(this.options.dir, this.options.org, repoName, '.meta/label.json');
+        const path: string = join(this.options.dir, this.options.org, repoName, 'label.json');
 
         if (!await pathExists(path)) {
             throw new Error('Can not find label path: ' + path);
@@ -135,7 +135,7 @@ export abstract class AbstractGithubRestore {
     }
 
     async getMilestoneMeta(repoName: string): Promise<MilestoneMeta> {
-        const path: string = join(this.options.dir, this.options.org, repoName, '.meta/milestone.json');
+        const path: string = join(this.options.dir, this.options.org, repoName, 'milestone.json');
 
         if (!await pathExists(path)) {
             throw new Error('Can not find milestone path: ' + path);
@@ -148,7 +148,7 @@ export abstract class AbstractGithubRestore {
     }
 
     async getSettingsMeta(repoName: string): Promise<SettingsMeta> {
-        const path: string = join(this.options.dir, this.options.org, repoName, '.meta/settings.json');
+        const path: string = join(this.options.dir, this.options.org, repoName, 'settings.json');
 
         if (!await pathExists(path)) {
             throw new Error('Can not find settings path: ' + path);
