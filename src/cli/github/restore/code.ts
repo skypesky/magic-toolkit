@@ -7,7 +7,6 @@ export class GithubCodeRestore extends AbstractGithubRestore {
 
         const codeMetas = await this.findCodeMeta();
 
-
         await pAll(
             codeMetas.map(x => {
                 return async () => {
@@ -22,20 +21,15 @@ export class GithubCodeRestore extends AbstractGithubRestore {
 
         const repoName: string = codeMeta.repoName;
         const repoUrl = `https://${this.options.token}@github.com/${this.options.org}/${repoName}.git`;
+        const localRepoPath = codeMeta.path;
+        const remoteName = 'github';
 
         try {
-            const localRepoPath = codeMeta.path;
 
-            const remotes = await simpleGit(localRepoPath).getRemotes();
-            const existGithubRemote = remotes.some(x => x.name === 'github');
-
-            if (existGithubRemote) {
-                await simpleGit(localRepoPath).removeRemote('github');
-            }
-
+            await this.removeRemote(localRepoPath, remoteName);
             // Push to GitHub repository
-            await simpleGit(localRepoPath).addRemote('github', repoUrl);
-            await simpleGit(localRepoPath).push(['-u', 'github', '--all']);
+            await simpleGit(localRepoPath).addRemote(remoteName, repoUrl);
+            await simpleGit(localRepoPath).push(['-u', remoteName, '--all']);
 
             console.log(`Repository '${repoName}' restored to GitHub successfully.`);
         } catch (error) {
@@ -44,6 +38,21 @@ export class GithubCodeRestore extends AbstractGithubRestore {
                 org: this.options.org,
                 repoName,
             });
+        } finally {
+            await this.removeRemote(localRepoPath, remoteName);
         }
+    }
+
+    async removeRemote(localRepoPath: string, remoteName: string): Promise<void> {
+        if (await this.remoteExists(localRepoPath, remoteName)) {
+            await simpleGit(localRepoPath).removeRemote(remoteName);
+        }
+    }
+
+    async remoteExists(localRepoPath: string, remoteName: string): Promise<boolean> {
+        const remotes = await simpleGit(localRepoPath).getRemotes();
+        const existGithubRemote = remotes.some(x => x.name === remoteName);
+
+        return existGithubRemote;
     }
 }

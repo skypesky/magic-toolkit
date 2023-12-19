@@ -1,8 +1,6 @@
-import fs, { existsSync, remove } from 'fs-extra';
+import { existsSync, remove } from 'fs-extra';
 import { cpus } from 'os';
 import pAll from 'p-all';
-import got from 'got';
-import { pipeline } from 'stream/promises';
 import { AbstractGithubBackup } from '../protocol';
 import simpleGit from 'simple-git';
 
@@ -38,9 +36,8 @@ export class GithubCodeBackup extends AbstractGithubBackup {
 
       // Clone private repository with token
       await simpleGit().clone(repoPath, localCodePath, ['--mirror']);
-      console.log(`Repository '${repoName}' backed up to: ${localCodePath}`);
     } catch (error) {
-      console.error('Error during backup:', error.message);
+      console.error('Error during backup code:', error.message);
     }
   }
 

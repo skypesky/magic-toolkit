@@ -1,4 +1,4 @@
-import { Octokit } from "@octokit/rest";
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import { join } from "path";
 import fetch from 'node-fetch';
 import FastGlob, { Entry } from 'fast-glob'
@@ -59,6 +59,9 @@ export interface GithubRestoreOptions {
      */
     dir?: string;
 }
+
+export type User = RestEndpointMethodTypes["users"]["getAuthenticated"]["response"]['data']
+
 
 export abstract class AbstractGithubRestore {
 
@@ -243,5 +246,11 @@ export abstract class AbstractGithubRestore {
                 repoName,
             }
         });
+    }
+
+    async getCurrentUser(): Promise<User> {
+        const { data } = await this.octokit.users.getAuthenticated();
+
+        return data;
     }
 }

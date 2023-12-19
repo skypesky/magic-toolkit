@@ -1,7 +1,6 @@
-import { Octokit } from "@octokit/rest";
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import { join } from "path";
 import fetch from 'node-fetch';
-
 
 export interface GithubBackupOptions {
     // github 组织名称
@@ -43,12 +42,8 @@ export abstract class AbstractGithubBackup {
         return join(this.options.dir, this.options.org, repoName);
     }
 
-    getIssuePath(repoName: string, issueNumber: number) {
-        return join(this.getRepoPath(repoName), `.meta/issue/${issueNumber}.json`)
-    }
-
-    getPullRequestPath(repoName: string, issueNumber: number) {
-        return join(this.getRepoPath(repoName), `.meta/pull/${issueNumber}.json`)
+    getIssuePath(repoName: string, id: number) {
+        return join(this.getRepoPath(repoName), `.meta/issue/${id}.json`)
     }
 
     getCodePath(repoName: string): string {

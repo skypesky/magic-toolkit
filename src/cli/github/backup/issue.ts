@@ -44,7 +44,7 @@ export class GithubIssueBackup extends AbstractGithubBackup {
                     })
 
                     const data = { ...issue, extra: { comments } }
-                    const issuePath = this.getIssuePath(repoName, issue.number)
+                    const issuePath = this.getIssuePath(repoName, issue.id)
 
                     await fs.ensureDir(dirname(issuePath))
                     await fs.writeJson(issuePath, data);

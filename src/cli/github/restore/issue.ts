@@ -48,14 +48,18 @@ export class GithubIssueRestore extends AbstractGithubRestore {
         });
 
         const commentsData = issueData.extra.comments.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        const user = await this.getCurrentUser();
         for (const comment of commentsData) {
             const exists = comments.find(c => c.body === comment.body);
             if (!exists) {
+
+                const sign = user.login === comment.user.login ? '' : `\r\n ------- comment by @${comment.user.login} -------`;
+
                 await this.octokit.issues.createComment({
                     owner: this.options.org,
                     repo: issueMeta.repoName,
                     issue_number: issue.number,
-                    body: comment.body
+                    body: `${comment.body}${sign}`,
                 });
             }
         }
