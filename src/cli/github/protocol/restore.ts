@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 import FastGlob, { Entry } from 'fast-glob'
 import pAll from "p-all";
 import { flatten } from "lodash";
+import { cpus } from "os";
 
 export interface RepositoryMeta {
     name: string;
@@ -127,7 +128,10 @@ export abstract class AbstractGithubRestore {
                         }
                     })
                 }
-            })
+            }),
+            {
+                concurrency: cpus().length,
+            }
         );
 
         const issueMetas = flatten(results).sort((a, b) => a.id - b.id);
@@ -157,7 +161,10 @@ export abstract class AbstractGithubRestore {
                         }
                     })
                 }
-            })
+            }),
+            {
+                concurrency: cpus().length,
+            }
         );
 
         const issueMetas = flatten(results).sort((a, b) => a.id - b.id);

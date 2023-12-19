@@ -1,6 +1,7 @@
 import pAll from "p-all";
 import { AbstractGithubRestore, SettingsMeta } from "../protocol";
 import { readJson } from "fs-extra";
+import { cpus } from "os";
 
 export class GithubSettingsRestore extends AbstractGithubRestore {
     async restore() {
@@ -9,10 +10,13 @@ export class GithubSettingsRestore extends AbstractGithubRestore {
 
         await pAll(
             settingsMetas.map(x => {
-                return async () =>{
+                return async () => {
                     return this.restoreSettings(x);
                 }
-            })
+            }),
+            {
+                concurrency: cpus().length,
+            }
         );
 
         return null;
@@ -21,31 +25,32 @@ export class GithubSettingsRestore extends AbstractGithubRestore {
     async restoreSettings(settingsMeta: SettingsMeta): Promise<void> {
         const settingsData = await readJson(settingsMeta.path);
 
-      
+
         try {
-            const currentSettings = await this.octokit.repos.get({ 
-                owner: this.options.org, 
+            const currentSettings = await this.octokit.repos.get({
+                owner: this.options.org,
                 repo: settingsMeta.repoName
             });
-    
+
             if (currentSettings) {
-                return ;
+                return;
             }
         } catch (error) {
             if (error.status === 404) {
                 // 如果设置不存在，则创建新的设置
                 await this.octokit.repos.createInOrg({
-                    owner: this.options.org, 
+                    owner: this.options.org,
                     repo: settingsMeta.repoName,
-                    ...settingsData 
-                  });
-                console.log('Repository settings created successfully.', {
-                    org: this.options.org, 
-                    repo: settingsMeta.repoName 
+                    visibility: 'private',
+                    ...settingsData
                 });
-              } else {
+                console.log('Repository settings created successfully.', {
+                    org: this.options.org,
+                    repo: settingsMeta.repoName
+                });
+            } else {
                 console.error("Repository settings restore throw error:", error);
-              }
+            }
         }
 
     }

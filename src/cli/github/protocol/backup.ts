@@ -18,12 +18,16 @@ export interface GithubBackupOptions {
     dir?: string;
 }
 
+export type Repo = RestEndpointMethodTypes["repos"]["listForOrg"]["response"]['data'][0];
+
+
 export abstract class AbstractGithubBackup {
 
     readonly options: GithubBackupOptions;
     readonly octokit: Octokit;
 
     abstract backup(): Promise<void>;
+    abstract backupRepository(repo: Repo): Promise<void>;
 
     constructor(options: GithubBackupOptions) {
         this.options = {
@@ -42,8 +46,8 @@ export abstract class AbstractGithubBackup {
         return join(this.options.dir, this.options.org, repoName);
     }
 
-    getIssuePath(repoName: string, id: number) {
-        return join(this.getRepoPath(repoName), `.meta/issue/${id}.json`)
+    getIssuePath(repoName: string, issueNumber: number) {
+        return join(this.getRepoPath(repoName), `.meta/issue/${issueNumber}.json`)
     }
 
     getCodePath(repoName: string): string {

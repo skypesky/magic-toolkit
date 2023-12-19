@@ -1,6 +1,7 @@
 import pAll from "p-all";
 import { AbstractGithubRestore, CodeMeta } from "../protocol";
 import simpleGit from "simple-git";
+import { cpus } from "os";
 
 export class GithubCodeRestore extends AbstractGithubRestore {
     async restore() {
@@ -12,7 +13,10 @@ export class GithubCodeRestore extends AbstractGithubRestore {
                 return async () => {
                     return this.restoreCode(x);
                 }
-            })
+            }),
+            {
+                concurrency: cpus().length,
+            }
         );
 
     }

@@ -5,6 +5,7 @@ import { GithubIssueRestore } from "./issue";
 import { GithubLabelRestore } from "./label";
 import { GithubSettingsRestore } from "./settings";
 import { GithubMilestoneRestore } from "./milestone";
+import { cpus } from "os";
 
 export class GithubRestore extends AbstractGithubRestore {
 
@@ -26,7 +27,10 @@ export class GithubRestore extends AbstractGithubRestore {
                 return async () => {
                     return this.ensureRepositoryCreated(x);
                 }
-            })
+            }),
+            {
+                concurrency: cpus().length,
+            }
         );
 
         return null;
@@ -42,6 +46,7 @@ export class GithubRestore extends AbstractGithubRestore {
                 await this.octokit.repos.createInOrg({
                     org: this.options.org,
                     name: repoMeta.name,
+                    visibility: 'private'
                 });
             }
         } catch (error) {
@@ -50,6 +55,7 @@ export class GithubRestore extends AbstractGithubRestore {
                 await this.octokit.repos.createInOrg({
                     org: this.options.org,
                     name: repoMeta.name,
+                    visibility: 'private'
                 });
 
                 console.log(`Repository '${repoMeta.name}' created successfully in the organization '${this.options.org}'.`, {

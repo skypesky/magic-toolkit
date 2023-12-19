@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { cpus } from 'os';
 import pAll from 'p-all';
 import { dirname } from 'path';
-import { AbstractGithubBackup } from '../protocol';
+import { AbstractGithubBackup, Repo } from '../protocol';
 
 export class GithubMilestoneBackup extends AbstractGithubBackup {
 
@@ -15,7 +15,7 @@ export class GithubMilestoneBackup extends AbstractGithubBackup {
         await pAll(
             repos.data.map(repo => {
                 return async () => {
-                    await this.backupMilestone(repo.name);
+                    await this.backupRepository(repo);
                 }
             }),
             {
@@ -24,7 +24,9 @@ export class GithubMilestoneBackup extends AbstractGithubBackup {
         );
     }
 
-    async backupMilestone(repoName: string): Promise<void> {
+    async backupRepository(repo: Repo): Promise<void> {
+
+        const repoName = repo.name;
         const response = await this.octokit.issues.listMilestones({
             owner: this.options.org,
             repo: repoName,

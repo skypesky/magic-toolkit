@@ -2,6 +2,7 @@ import pAll from "p-all";
 import { AbstractGithubRestore, LabelMeta } from "../protocol";
 import { readJson } from "fs-extra";
 import { RestEndpointMethodTypes } from "@octokit/rest";
+import { cpus } from "os";
 
 
 export type Milestone = RestEndpointMethodTypes["issues"]["createMilestone"]["response"]['data']
@@ -16,7 +17,10 @@ export class GithubMilestoneRestore extends AbstractGithubRestore {
                 return async () => {
                     return this.restoreMilestone(milestoneMeta);
                 }
-            })
+            }),
+            {
+                concurrency: cpus().length,
+            }
         );
 
     }
@@ -40,7 +44,10 @@ export class GithubMilestoneRestore extends AbstractGithubRestore {
                         });
                     }
                 }
-            })
+            }),
+            {
+                concurrency: cpus().length,
+            }
         )
     }
 

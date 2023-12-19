@@ -2,6 +2,7 @@ import pAll from "p-all";
 import { AbstractGithubRestore, LabelMeta } from "../protocol";
 import { readJson } from "fs-extra";
 import { RestEndpointMethodTypes } from "@octokit/rest";
+import { cpus } from "os";
 
 
 export type Label = RestEndpointMethodTypes["issues"]["createLabel"]["response"]['data']
@@ -16,7 +17,10 @@ export class GithubLabelRestore extends AbstractGithubRestore {
                 return async () => {
                     return this.restoreLabel(labelMeta);
                 }
-            })
+            }),
+            {
+                concurrency: cpus().length,
+            }
         );
 
         return null;
@@ -40,7 +44,10 @@ export class GithubLabelRestore extends AbstractGithubRestore {
                         });
                     }
                 }
-            })
+            }),
+            {
+                concurrency: cpus().length,
+            }
         )
     }
 
