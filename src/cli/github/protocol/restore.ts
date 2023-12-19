@@ -2,12 +2,10 @@ import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 import { join } from "path";
 import fetch from 'node-fetch';
 import FastGlob, { Entry } from 'fast-glob'
-import pAll from "p-all";
-import { flatten } from "lodash";
-import { cpus } from "os";
+import { pathExists } from "fs-extra";
 
 export interface RepositoryMeta {
-    name: string;
+    repoName: string;
     path: string;
 }
 
@@ -18,32 +16,17 @@ export interface IssueMeta extends RepositoryMeta {
      * @memberof IssueMeta
      */
     id: number;
-
-    /**
-     * @description
-     * @type {string}
-     * @memberof IssueMeta
-     */
-    repoName: string;
 }
 
 export type PullRequestMeta = IssueMeta;
 
-export interface LabelMeta extends RepositoryMeta {
-    repoName: string;
-}
+export type LabelMeta = RepositoryMeta
 
-export interface MilestoneMeta extends RepositoryMeta {
-    repoName: string;
-}
+export type MilestoneMeta = RepositoryMeta
 
-export interface SettingsMeta extends RepositoryMeta {
-    repoName: string;
-}
+export type SettingsMeta = RepositoryMeta
 
-export interface CodeMeta extends RepositoryMeta {
-    repoName: string;
-}
+export type CodeMeta = RepositoryMeta
 
 export interface GithubRestoreOptions {
     // github 组织名称
@@ -61,7 +44,7 @@ export interface GithubRestoreOptions {
     dir?: string;
 }
 
-export type User = RestEndpointMethodTypes["users"]["getAuthenticated"]["response"]['data']
+export type User = RestEndpointMethodTypes["users"]["getAuthenticated"]["response"]['data'];
 
 
 export abstract class AbstractGithubRestore {
@@ -70,6 +53,7 @@ export abstract class AbstractGithubRestore {
     readonly octokit: Octokit;
 
     abstract restore(): Promise<void>;
+    abstract restoreRepository(repoName: string): Promise<void>;
 
     constructor(options: GithubRestoreOptions) {
         this.options = {
@@ -84,10 +68,6 @@ export abstract class AbstractGithubRestore {
         });
     }
 
-    getOrgPath(): string {
-        return join(this.options.dir, this.options.org);
-    }
-
     getRepoPath(repoName: string): string {
         return join(this.options.dir, this.options.org, repoName);
     }
@@ -100,159 +80,84 @@ export abstract class AbstractGithubRestore {
             absolute: true,
             objectMode: true,
         })
-        return entryList;
-    }
-
-    getIssuePath(repoName: string, issueNumber: number) {
-        return join(this.getRepoPath(repoName), `.meta/issue/${issueNumber}.json`)
-    }
-
-    async findIssueMeta(): Promise<IssueMeta[]> {
-
-        const repoMetas = await this.findRepoMeta();
-        const results = await pAll(
-            repoMetas.map(repoMeta => {
-                return async (): Promise<IssueMeta[]> => {
-                    const entryListForIssues = await FastGlob.async(`${this.getRepoPath(repoMeta.name)}/.meta/issue/**`, {
-                        deep: 1,
-                        absolute: true,
-                        objectMode: true,
-                        onlyFiles: true,
-                    });
-
-                    return entryListForIssues.map(entry => {
-                        return {
-                            ...entry,
-                            id: +entry.name.split('.').shift(),
-                            repoName: repoMeta.name,
-                        }
-                    })
-                }
-            }),
-            {
-                concurrency: cpus().length,
+        return entryList.map(x => {
+            return {
+                ...x,
+                repoName: x.name,
             }
-        );
-
-        const issueMetas = flatten(results).sort((a, b) => a.id - b.id);
-
-        return issueMetas;
+        });
     }
 
-
-    async findPullRequestMeta(): Promise<IssueMeta[]> {
-
-        const repoMetas = await this.findRepoMeta();
-        const results = await pAll(
-            repoMetas.map(repoMeta => {
-                return async (): Promise<IssueMeta[]> => {
-                    const entryListForIssues = await FastGlob.async(`${this.getRepoPath(repoMeta.name)}/.meta/issue/**`, {
-                        deep: 1,
-                        absolute: true,
-                        objectMode: true,
-                        onlyFiles: true,
-                    });
-
-                    return entryListForIssues.map(entry => {
-                        return {
-                            ...entry,
-                            id: +entry.name.split('.').shift(),
-                            repoName: repoMeta.name,
-                        }
-                    })
-                }
-            }),
-            {
-                concurrency: cpus().length,
-            }
-        );
-
-        const issueMetas = flatten(results).sort((a, b) => a.id - b.id);
-
-        return issueMetas;
-    }
-
-    async findCodeMeta(): Promise<CodeMeta[]> {
-        const entryList: Entry[] = await FastGlob.async(`${this.options.org}/**/.meta/source/`, {
-            cwd: this.options.dir,
-            onlyDirectories: true,
+    async findIssueMeta(repoName: string): Promise<IssueMeta[]> {
+        const entryList = await FastGlob.async(`${this.getRepoPath(repoName)}/.meta/issue/**`, {
+            deep: 1,
             absolute: true,
             objectMode: true,
-            markDirectories: true
-        });
-
-
-        return entryList.map(entry => {
-
-            const repoName = entry.path.replaceAll(`${this.getOrgPath()}/`, '').replaceAll('/.meta/source/', '');
-
-            return {
-                ...entry,
-                repoName,
-            }
-        });
-    }
-
-
-    async findLabelMeta(): Promise<LabelMeta[]> {
-        const entryList: Entry[] = await FastGlob.async(`${this.getOrgPath()}/*/.meta/label.json`, {
             onlyFiles: true,
-            absolute: true,
-            objectMode: true,
-            dot: true,
-        })
+        });
 
         return entryList.map(entry => {
-
-            const repoName = entry.path.replaceAll(`${this.getOrgPath()}/`, '').replaceAll('/.meta/label.json', '');
-
             return {
                 ...entry,
-                repoName,
+                id: +entry.name.split('.').shift(),
+                repoName: repoName,
             }
         });
     }
 
-    async findMilestoneMeta(): Promise<MilestoneMeta[]> {
-        const entryList: Entry[] = await FastGlob.async(`${this.getOrgPath()}/*/.meta/milestone.json`, {
-            onlyFiles: true,
-            absolute: true,
-            objectMode: true,
-            dot: true,
-        })
+    async getCodeMeta(repoName: string): Promise<CodeMeta> {
 
-        return entryList.map(entry => {
+        const path = join(this.options.dir, this.options.org, repoName, '.meta/source/');
 
-            const repoName = entry.path.replaceAll(`${this.getOrgPath()}/`, '').replaceAll('/.meta/milestone.json', '');
+        if (!await pathExists(path)) {
+            throw new Error('Can not find code path: ' + path);
+        }
 
-            return {
-                ...entry,
-                repoName,
-            }
-        });
+        return {
+            path,
+            repoName
+        };
     }
 
-    getSettingsPath(repoName: string) {
-        return join(this.getRepoPath(repoName), `.meta/settings.json`)
+
+    async getLabelMeta(repoName: string): Promise<LabelMeta> {
+
+        const path: string = join(this.options.dir, this.options.org, repoName, '.meta/label.json');
+
+        if (!await pathExists(path)) {
+            throw new Error('Can not find label path: ' + path);
+        }
+
+        return {
+            path,
+            repoName
+        };
     }
 
-    async findSettingsMetas(): Promise<SettingsMeta[]> {
-        const entryList: Entry[] = await FastGlob.async(`${this.getOrgPath()}/*/.meta/settings.json`, {
-            onlyFiles: true,
-            absolute: true,
-            objectMode: true,
-            dot: true,
-        })
+    async getMilestoneMeta(repoName: string): Promise<MilestoneMeta> {
+        const path: string = join(this.options.dir, this.options.org, repoName, '.meta/milestone.json');
 
-        return entryList.map(entry => {
+        if (!await pathExists(path)) {
+            throw new Error('Can not find milestone path: ' + path);
+        }
 
-            const repoName = entry.path.replaceAll(`${this.getOrgPath()}/`, '').replaceAll('/.meta/settings.json', '');
+        return {
+            path,
+            repoName
+        };
+    }
 
-            return {
-                ...entry,
-                repoName,
-            }
-        });
+    async getSettingsMeta(repoName: string): Promise<SettingsMeta> {
+        const path: string = join(this.options.dir, this.options.org, repoName, '.meta/settings.json');
+
+        if (!await pathExists(path)) {
+            throw new Error('Can not find settings path: ' + path);
+        }
+
+        return {
+            path,
+            repoName
+        };
     }
 
     async getCurrentUser(): Promise<User> {

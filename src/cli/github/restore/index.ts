@@ -1,51 +1,53 @@
-import pAll from "p-all";
-import { AbstractGithubRestore, RepositoryMeta } from "../protocol/restore";
+import { AbstractGithubRestore, GithubRestoreOptions } from "../protocol/restore";
 import { GithubCodeRestore } from "./code";
 import { GithubIssueRestore } from "./issue";
 import { GithubLabelRestore } from "./label";
 import { GithubSettingsRestore } from "./settings";
 import { GithubMilestoneRestore } from "./milestone";
-import { cpus } from "os";
 
 export class GithubRestore extends AbstractGithubRestore {
 
+    restoreInstances: AbstractGithubRestore[];
+
+    constructor(options: GithubRestoreOptions) {
+        super(options);
+        this.restoreInstances = [
+            new GithubCodeRestore(this.options),
+            new GithubLabelRestore(this.options),
+            new GithubMilestoneRestore(this.options),
+            new GithubIssueRestore(this.options),
+            new GithubSettingsRestore(this.options),
+        ];
+    }
+
+
     async restore(): Promise<void> {
-        await this.ensureAllRepositoryCreated();
-        await new GithubCodeRestore(this.options).restore();
-        await new GithubLabelRestore(this.options).restore();
-        await new GithubMilestoneRestore(this.options).restore();
-        await new GithubIssueRestore(this.options).restore();
-        await new GithubSettingsRestore(this.options).restore();
+        const repoMetas = await this.findRepoMeta();
+
+        for (const repoMeta of repoMetas) {
+            await this.restoreRepository(repoMeta.repoName);
+        }
+
     }
 
-    async ensureAllRepositoryCreated(): Promise<void> {
+    async restoreRepository(repoName: string): Promise<void> {
 
-        const findRepoMetas = await this.findRepoMeta();
-
-        await pAll(
-            findRepoMetas.map(x => {
-                return async () => {
-                    return this.ensureRepositoryCreated(x);
-                }
-            }),
-            {
-                concurrency: cpus().length,
-            }
-        );
-
-        return null;
+        await this.ensureRepositoryCreated(repoName);
+        for (const restoreInstance of this.restoreInstances) {
+            await restoreInstance.restoreRepository(repoName);
+        }
     }
 
-    async ensureRepositoryCreated(repoMeta: RepositoryMeta): Promise<void> {
+    async ensureRepositoryCreated(repoName: string): Promise<void> {
         try {
             const { data: existingRepo } = await this.octokit.repos.get({
                 owner: this.options.org,
-                repo: repoMeta.name,
+                repo: repoName,
             });
             if (!existingRepo) {
                 await this.octokit.repos.createInOrg({
                     org: this.options.org,
-                    name: repoMeta.name,
+                    name: repoName,
                     visibility: 'private'
                 });
             }
@@ -54,13 +56,13 @@ export class GithubRestore extends AbstractGithubRestore {
                 // 如果仓库不存在，则创建仓库
                 await this.octokit.repos.createInOrg({
                     org: this.options.org,
-                    name: repoMeta.name,
+                    name: repoName,
                     visibility: 'private'
                 });
 
-                console.log(`Repository '${repoMeta.name}' created successfully in the organization '${this.options.org}'.`, {
+                console.log(`Repository '${repoName}' created successfully in the organization '${this.options.org}'.`, {
                     org: this.options.org,
-                    name: repoMeta.name,
+                    name: repoName,
                 });
             } else {
                 // 如果发生其他错误，则输出错误信息

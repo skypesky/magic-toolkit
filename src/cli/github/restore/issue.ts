@@ -13,20 +13,27 @@ export type MyIssue = Issue & {
 
 export class GithubIssueRestore extends AbstractGithubRestore {
     async restore() {
-        const issuesMetas: IssueMeta[] = await this.findIssueMeta();
-        await pAll(
-            issuesMetas.map(issueMeta => {
-                return async () => {
-                    await this.restoreIssue(issueMeta);
-                }
-            }), {
+        return null;
+    }
+
+    async restoreRepository(repoName: string): Promise<void> {
+
+        const issuesMetas: IssueMeta[] = await this.findIssueMeta(repoName);
+
+        await pAll(issuesMetas.map(x => {
+            return async () => {
+                return this.restoreIssue(x);
+            }
+        }), {
             concurrency: cpus().length,
-        });
+        })
 
     }
 
-    async restoreIssue(issueMeta: IssueMeta): Promise<void> {
+    private async restoreIssue(issueMeta: IssueMeta): Promise<void> {
+
         const issueData: MyIssue = await fs.readJSON(issueMeta.path);
+
         // 如果创建过了 issue 就不创建了
         const exists = await this.issueExists(issueMeta.repoName, issueData.title);
         if (!exists) {

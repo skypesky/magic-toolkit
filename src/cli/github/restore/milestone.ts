@@ -1,5 +1,5 @@
 import pAll from "p-all";
-import { AbstractGithubRestore, LabelMeta } from "../protocol";
+import { AbstractGithubRestore } from "../protocol";
 import { readJson } from "fs-extra";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { cpus } from "os";
@@ -9,34 +9,21 @@ export type Milestone = RestEndpointMethodTypes["issues"]["createMilestone"]["re
 
 export class GithubMilestoneRestore extends AbstractGithubRestore {
     async restore() {
-
-        const milestoneMeta = await this.findMilestoneMeta();
-
-        await pAll(
-            milestoneMeta.map(milestoneMeta => {
-                return async () => {
-                    return this.restoreMilestone(milestoneMeta);
-                }
-            }),
-            {
-                concurrency: cpus().length,
-            }
-        );
-
+        return null;
     }
 
+    async restoreRepository(repoName: string): Promise<void> {
 
-    async restoreMilestone(labelMeta: LabelMeta): Promise<void> {
-
-        const milestoneData: Milestone[] = await readJson(labelMeta.path);
+        const milestoneMeta = await this.getMilestoneMeta(repoName);
+        const milestoneData: Milestone[] = await readJson(repoName);
 
         await pAll(
             milestoneData.map(milestone => {
                 return async () => {
-                    if (!await this.milestoneExists(labelMeta.repoName, milestone.title)) {
+                    if (!await this.milestoneExists(milestoneMeta.repoName, milestone.title)) {
                         await this.octokit.issues.createMilestone({
                             owner: this.options.org,
-                            repo: labelMeta.repoName,
+                            repo: milestoneMeta.repoName,
                             title: milestone.title,
                             description: milestone.description,
                             due_on: milestone.due_on,

@@ -1,17 +1,17 @@
 import pAll from "p-all";
-import { AbstractGithubRestore, SettingsMeta } from "../protocol";
+import { AbstractGithubRestore } from "../protocol";
 import { readJson } from "fs-extra";
 import { cpus } from "os";
 
 export class GithubSettingsRestore extends AbstractGithubRestore {
     async restore() {
 
-        const settingsMetas = await this.findSettingsMetas();
+        const repoMetas = await this.findRepoMeta();
 
         await pAll(
-            settingsMetas.map(x => {
+            repoMetas.map(x => {
                 return async () => {
-                    return this.restoreSettings(x);
+                    return this.restoreRepository(x.repoName);
                 }
             }),
             {
@@ -22,9 +22,10 @@ export class GithubSettingsRestore extends AbstractGithubRestore {
         return null;
     }
 
-    async restoreSettings(settingsMeta: SettingsMeta): Promise<void> {
-        const settingsData = await readJson(settingsMeta.path);
+    async restoreRepository(repoName: string): Promise<void> {
 
+        const settingsMeta = await this.getSettingsMeta(repoName);
+        const settingsData = await readJson(settingsMeta.path);
 
         try {
             const currentSettings = await this.octokit.repos.get({

@@ -1,17 +1,17 @@
 import pAll from "p-all";
-import { AbstractGithubRestore, CodeMeta } from "../protocol";
+import { AbstractGithubRestore } from "../protocol";
 import simpleGit from "simple-git";
 import { cpus } from "os";
 
 export class GithubCodeRestore extends AbstractGithubRestore {
     async restore() {
 
-        const codeMetas = await this.findCodeMeta();
+        const repoMetas = await this.findRepoMeta();
 
         await pAll(
-            codeMetas.map(x => {
+            repoMetas.map(x => {
                 return async () => {
-                    return this.restoreCode(x);
+                    return this.restoreRepository(x.repoName);
                 }
             }),
             {
@@ -21,9 +21,9 @@ export class GithubCodeRestore extends AbstractGithubRestore {
 
     }
 
-    async restoreCode(codeMeta: CodeMeta): Promise<void> {
+    async restoreRepository(repoName: string): Promise<void> {
 
-        const repoName: string = codeMeta.repoName;
+        const codeMeta = await this.getCodeMeta(repoName);
         const repoUrl = `https://${this.options.token}@github.com/${this.options.org}/${repoName}.git`;
         const localRepoPath = codeMeta.path;
         const remoteName = 'github';

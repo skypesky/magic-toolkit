@@ -9,26 +9,12 @@ export type Label = RestEndpointMethodTypes["issues"]["createLabel"]["response"]
 
 export class GithubLabelRestore extends AbstractGithubRestore {
     async restore() {
-
-        const labelMetas = await this.findLabelMeta();
-
-        await pAll(
-            labelMetas.map(labelMeta => {
-                return async () => {
-                    return this.restoreLabel(labelMeta);
-                }
-            }),
-            {
-                concurrency: cpus().length,
-            }
-        );
-
         return null;
     }
 
+    async restoreRepository(repoName: string): Promise<void> {
 
-    async restoreLabel(labelMeta: LabelMeta): Promise<void> {
-
+        const labelMeta = await this.getLabelMeta(repoName);
         const labelsData: Label[] = await readJson(labelMeta.path);
 
         await pAll(
