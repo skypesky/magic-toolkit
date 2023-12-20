@@ -12,6 +12,4 @@ function ipfsCommand() {
   return command;
 }
 
-
-
 export { ipfsCommand };

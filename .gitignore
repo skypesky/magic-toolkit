@@ -5,3 +5,7 @@ coverage/
 
 **/*.log
 .DS_Store
+
+blocklet/
+ArcBlock/
+skypesky*/
