@@ -1,3 +1,7 @@
+# 2023/12/20(0.0.3)
+
+- 支持了: backup/restore github
+
 # 2023/11/23(0.0.2)
 
 - feat: support md5 command
