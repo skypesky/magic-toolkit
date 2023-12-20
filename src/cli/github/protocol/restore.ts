@@ -42,6 +42,15 @@ export interface GithubRestoreOptions {
      * @memberof GithubBackupOptions
      */
     dir?: string;
+
+    /**
+     * 
+     * @description 还原指定的仓库
+     * @default []
+     * @type {string[]}
+     * @memberof GithubRestoreOptions
+     */
+    repos?: string[]
 }
 
 export type User = RestEndpointMethodTypes["users"]["getAuthenticated"]["response"]['data'];
@@ -79,8 +88,14 @@ export abstract class AbstractGithubRestore {
             deep: 1,
             absolute: true,
             objectMode: true,
-        })
-        return entryList.map(x => {
+        });
+
+        return entryList.filter(x => {
+            if (!this.options.repos.length) {
+                return true;
+            }
+            return this.options.repos.includes(x.name);
+        }).map(x => {
             return {
                 ...x,
                 repoName: x.name,
