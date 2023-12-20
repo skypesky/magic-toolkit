@@ -66,8 +66,8 @@ export abstract class AbstractGithubRestore {
 
     constructor(options: GithubRestoreOptions) {
         this.options = {
-            dir: process.cwd(),
-            ...options
+            ...options,
+            dir: options.dir || process.cwd(),
         };
         this.octokit = new Octokit({
             auth: this.options.token, // 请替换为你的个人访问令牌
