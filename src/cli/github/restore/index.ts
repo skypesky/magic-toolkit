@@ -63,11 +63,6 @@ export class GithubRestore extends AbstractGithubRestore {
                     name: repoName,
                     visibility: 'private'
                 });
-
-                console.log(`Repository '${repoName}' created successfully in the organization '${this.options.org}'.`, {
-                    org: this.options.org,
-                    name: repoName,
-                });
             } else {
                 // 如果发生其他错误，则输出错误信息
                 console.error('Error checking or creating repository:', error.message);

@@ -18,8 +18,8 @@ export class GithubBackup extends AbstractGithubBackup {
         name: x.name
       }
     }));
-    // const repos = [{ name: 'blocklet-server' }] || await progress.findRemaining();
-    const repos = await progress.findRemaining();
+    const repos = [{ name: 'blocklet-server' }] || await progress.findRemaining();
+    // const repos = await progress.findRemaining();
 
     console.log({
       repositoryListLen: repositoryList.length

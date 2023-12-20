@@ -26,14 +26,18 @@ export class GithubMilestoneRestore extends AbstractGithubRestore {
             milestoneData.map(milestone => {
                 return async () => {
                     if (!await this.milestoneExists(milestoneMeta.repoName, milestone.title)) {
-                        await this.octokit.issues.createMilestone({
+                        const milestoneCreation: any = {
                             owner: this.options.org,
                             repo: milestoneMeta.repoName,
                             title: milestone.title,
-                            description: milestone.description,
-                            due_on: milestone.due_on,
+                            description: milestone.description ?? '',
                             state: milestone.state
-                        });
+                        }
+                        if (milestone.due_on) {
+                            milestoneCreation.due_on = milestone.due_on;
+                        }
+
+                        await this.octokit.issues.createMilestone(milestoneCreation);
                     }
                 }
             }),
