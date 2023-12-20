@@ -18,20 +18,16 @@ export class GithubBackup extends AbstractGithubBackup {
         name: x.name
       }
     }));
-    const repos = [{ name: 'blocklet-server' }] || await progress.findRemaining();
-    // const repos = await progress.findRemaining();
-
-    console.log({
-      repositoryListLen: repositoryList.length
-    })
-
+    // const repos = [{ name: 'blocklet-server' }] || await progress.findRemaining();
+    const repos = await progress.findRemaining();
 
     for (const repo of repos) {
       try {
         await this.backupRepository(repo.name);
         await progress.delete(repo.name);
       } catch (error) {
-        console.error('Error during backup:', error.message);
+        console.error('GithubBackup.backup throw an error:', error.message);
+        console.error(error);
         break;
       } finally {
         await progress.printProgress({ repoName: repo.name });

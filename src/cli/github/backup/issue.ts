@@ -1,9 +1,10 @@
 import { RestEndpointMethodTypes } from '@octokit/rest';
-import fs, { writeJSON } from 'fs-extra';
+import fs, { pathExists, readJSON } from 'fs-extra';
 import { cpus } from 'os';
 import pAll from 'p-all';
 import { dirname } from 'path';
 import { AbstractGithubBackup } from '../protocol';
+import { isEqual } from 'lodash';
 
 export class GithubIssueBackup extends AbstractGithubBackup {
 
@@ -53,6 +54,15 @@ export class GithubIssueBackup extends AbstractGithubBackup {
                     const issuePath = this.getIssuePath(repoName, issue.number)
 
                     await fs.ensureDir(dirname(issuePath))
+
+                    if (await pathExists(issuePath)) {
+                        const oldContent = await readJSON(issuePath);
+
+                        if (isEqual(oldContent, data)) {
+                            return;
+                        }
+                    }
+
                     await fs.writeJson(issuePath, data);
                 }
             }), {

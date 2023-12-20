@@ -35,7 +35,8 @@ export class GithubCodeBackup extends AbstractGithubBackup {
       // Clone private repository with token
       await simpleGit().clone(repoPath, localCodePath, ['--mirror']);
     } catch (error) {
-      console.error('Error during backup code:', error.message);
+      console.error('GithubCodeBackup.backupRepository throw an error:', error.message);
+      throw error;
     }
   }
 
