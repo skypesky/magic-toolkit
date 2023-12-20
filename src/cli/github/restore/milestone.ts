@@ -15,7 +15,12 @@ export class GithubMilestoneRestore extends AbstractGithubRestore {
     async restoreRepository(repoName: string): Promise<void> {
 
         const milestoneMeta = await this.getMilestoneMeta(repoName);
-        const milestoneData: Milestone[] = await readJson(repoName);
+
+        if (!milestoneMeta) {
+            return;
+        }
+
+        const milestoneData: Milestone[] = await readJson(milestoneMeta.path);
 
         await pAll(
             milestoneData.map(milestone => {

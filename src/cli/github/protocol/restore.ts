@@ -110,7 +110,8 @@ export abstract class AbstractGithubRestore {
         const path = join(this.options.dir, this.options.org, repoName, 'source/');
 
         if (!await pathExists(path)) {
-            throw new Error('Can not find code path: ' + path);
+            console.warn('Can not find code path: ' + path);
+            return null;
         }
 
         return {
@@ -125,7 +126,8 @@ export abstract class AbstractGithubRestore {
         const path: string = join(this.options.dir, this.options.org, repoName, 'label.json');
 
         if (!await pathExists(path)) {
-            throw new Error('Can not find label path: ' + path);
+            console.warn('Can not find label path: ' + path);
+            return null;
         }
 
         return {
@@ -138,7 +140,8 @@ export abstract class AbstractGithubRestore {
         const path: string = join(this.options.dir, this.options.org, repoName, 'milestone.json');
 
         if (!await pathExists(path)) {
-            throw new Error('Can not find milestone path: ' + path);
+            console.warn('Can not find milestone path: ' + path);
+            return null;
         }
 
         return {
@@ -151,7 +154,8 @@ export abstract class AbstractGithubRestore {
         const path: string = join(this.options.dir, this.options.org, repoName, 'settings.json');
 
         if (!await pathExists(path)) {
-            throw new Error('Can not find settings path: ' + path);
+            console.warn('Can not find settings path: ' + path);
+            return null;
         }
 
         return {

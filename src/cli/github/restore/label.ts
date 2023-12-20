@@ -15,6 +15,10 @@ export class GithubLabelRestore extends AbstractGithubRestore {
     async restoreRepository(repoName: string): Promise<void> {
 
         const labelMeta = await this.getLabelMeta(repoName);
+        if (!labelMeta) {
+            return;
+        }
+
         const labelsData: Label[] = await readJson(labelMeta.path);
 
         await pAll(

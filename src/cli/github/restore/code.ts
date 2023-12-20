@@ -24,6 +24,10 @@ export class GithubCodeRestore extends AbstractGithubRestore {
     async restoreRepository(repoName: string): Promise<void> {
 
         const codeMeta = await this.getCodeMeta(repoName);
+        if (!codeMeta) {
+            return;
+        }
+
         const repoUrl = `https://${this.options.token}@github.com/${this.options.org}/${repoName}.git`;
         const localRepoPath = codeMeta.path;
         const remoteName = 'github';
@@ -34,8 +38,6 @@ export class GithubCodeRestore extends AbstractGithubRestore {
             // Push to GitHub repository
             await simpleGit(localRepoPath).addRemote(remoteName, repoUrl);
             await simpleGit(localRepoPath).push(['-u', remoteName, '--all']);
-
-            console.log(`Repository '${repoName}' restored to GitHub successfully.`);
         } catch (error) {
             console.error(error)
             console.error('Restore code throw an error', {

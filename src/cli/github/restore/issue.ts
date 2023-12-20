@@ -19,6 +19,9 @@ export class GithubIssueRestore extends AbstractGithubRestore {
     async restoreRepository(repoName: string): Promise<void> {
 
         const issuesMetas: IssueMeta[] = await this.findIssueMeta(repoName);
+        if (!issuesMetas.length) {
+            return;
+        }
 
         await pAll(issuesMetas.map(x => {
             return async () => {
