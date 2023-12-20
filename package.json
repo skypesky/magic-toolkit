@@ -1,6 +1,6 @@
 {
   "name": "magic-toolkit",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "bin": {
     "mt": "./dist/index.js"
   },
