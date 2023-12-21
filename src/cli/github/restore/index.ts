@@ -23,10 +23,6 @@ export class GithubRestore extends AbstractGithubRestore {
     async restore(): Promise<void> {
         const repoMetas = await this.findRepoMeta();
 
-        if (repoMetas) {
-            throw new Error('ok')
-        }
-
         for (const repoMeta of repoMetas) {
             try {
                 await this.restoreRepository(repoMeta.repoName);

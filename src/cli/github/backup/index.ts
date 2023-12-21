@@ -29,10 +29,10 @@ export class GithubBackup extends AbstractGithubBackup {
         console.error(error);
         break;
       } finally {
-        await progress.printProgress({ repoName: repo.name });
         if (await progress.isEmpty()) {
           await progress.done();
         }
+        await progress.printProgress({ repoName: repo.name });
       }
     }
 
