@@ -40,7 +40,7 @@ export class GithubIssueRestore extends AbstractGithubRestore {
         // 如果创建过了 issue 就不创建了
         const exists = await this.issueExists(issueMeta.repoName, issueData.title);
         if (!exists) {
-            const assignees = issueData.assignees.length ? '' : `\r\n\r\n ------- assignees: @${issueData.assignees.map(x => `@${x.login}`).join(',')} -------`;
+            const assignees = issueData.assignees.length ? `\r\n\r\n  assignees: @${issueData.assignees.map(x => `@${x.login}`).join(',')}` : '';
 
             await this.octokit.issues.create({
                 owner: this.options.org,
@@ -64,7 +64,7 @@ export class GithubIssueRestore extends AbstractGithubRestore {
             const exists = comments.find(c => c.body === comment.body);
             if (!exists) {
 
-                const sign = user.login === comment.user.login ? '' : `\r\n\r\n ------- comment by @${comment.user.login} -------`;
+                const sign = user.login === comment.user.login ? '' : `\r\n\r\n  comment by @${comment.user.login}`;
 
                 await this.octokit.issues.createComment({
                     owner: this.options.org,
