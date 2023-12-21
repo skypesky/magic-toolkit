@@ -3,6 +3,10 @@ import { GithubCodeRestore } from "./code";
 import { GithubIssueRestore } from "./issue";
 import { GithubLabelRestore } from "./label";
 import { GithubSettingsRestore } from "./settings";
+<<<<<<< HEAD
+=======
+import { GithubMilestoneRestore } from "./milestone";
+>>>>>>> release
 
 export class GithubRestore extends AbstractGithubRestore {
 
@@ -13,6 +17,10 @@ export class GithubRestore extends AbstractGithubRestore {
         this.restoreInstances = [
             new GithubCodeRestore(this.options),
             new GithubLabelRestore(this.options),
+<<<<<<< HEAD
+=======
+            new GithubMilestoneRestore(this.options),
+>>>>>>> release
             new GithubIssueRestore(this.options),
             new GithubSettingsRestore(this.options),
         ];
@@ -21,6 +29,13 @@ export class GithubRestore extends AbstractGithubRestore {
     async restore(): Promise<void> {
         const repoMetas = await this.findRepoMeta();
 
+<<<<<<< HEAD
+=======
+        if (repoMetas) {
+            throw new Error('ok')
+        }
+
+>>>>>>> release
         for (const repoMeta of repoMetas) {
             try {
                 await this.restoreRepository(repoMeta.repoName);

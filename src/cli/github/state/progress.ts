@@ -1,5 +1,8 @@
 
+<<<<<<< HEAD
 import FastGlob, { Entry } from 'fast-glob';
+=======
+>>>>>>> release
 import { Low } from 'lowdb/lib';
 import { JSONPreset } from 'lowdb/node'
 import { join } from 'path';
@@ -27,12 +30,15 @@ export interface Data {
   createdAt: string;
   repos: Array<Repo>;
   count: number;
+<<<<<<< HEAD
   summary: {
     repoCount: number;
     issueCount: number;
     durationMs: number;
     durationText: string;
   }
+=======
+>>>>>>> release
 }
 
 export class ReposBackupProgress {
@@ -53,12 +59,15 @@ export class ReposBackupProgress {
       createdAt: new Date().toISOString(),
       repos: [],
       count: 0,
+<<<<<<< HEAD
       summary: {
         repoCount: 0,
         issueCount: 0,
         durationMs: 0,
         durationText: '',
       }
+=======
+>>>>>>> release
     });
 
     if (!this.db.data.repos.length) {
@@ -102,6 +111,7 @@ export class ReposBackupProgress {
   }
 
   async done(): Promise<void> {
+<<<<<<< HEAD
 
     const entryList: Entry[] = await FastGlob.async(join(`${this.options.org}`, '**/issue/*.json'), {
       cwd: this.options.dir,
@@ -117,6 +127,8 @@ export class ReposBackupProgress {
       durationText: prettyMilliseconds(now - new Date(this.db.data.createdAt).getTime()),
     }
 
+=======
+>>>>>>> release
     this.db.data.createdAt = new Date().toISOString();
     this.db.data.count = 0;
     await this.db.write();
@@ -126,9 +138,14 @@ export class ReposBackupProgress {
     await this.db.read();
     console.log({
       ...data,
+<<<<<<< HEAD
       progress: `${(this.db.data.summary.repoCount - this.db.data.repos.length)} / ${this.db.data.summary.repoCount}`,
       duration: prettyMilliseconds(Date.now() - new Date(this.db.data.createdAt).getTime()),
       summary: this.db.data.summary,
+=======
+      progress: `${(this.db.data.count - this.db.data.repos.length)} / ${this.db.data.count}`,
+      duration: prettyMilliseconds(Date.now() - new Date(this.db.data.createdAt).getTime()),
+>>>>>>> release
       done: await this.isEmpty(),
     });
   }
