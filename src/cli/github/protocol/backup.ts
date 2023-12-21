@@ -17,6 +17,15 @@ export interface GithubBackupOptions {
      * @memberof GithubBackupOptions
      */
     dir?: string;
+
+    /**
+     * 
+     * @description 备份指定的仓库
+     * @default []
+     * @type {string[]}
+     * @memberof GithubBackupOptions
+     */
+    repos?: string[];
 }
 
 export type Repository = RestEndpointMethodTypes["repos"]["listForOrg"]["response"]['data'][0];
@@ -56,7 +65,13 @@ export abstract class AbstractGithubBackup {
             type: "all"
         });
 
-        this.repos = data;
+        // 注意此处过滤一下
+        this.repos = data.filter(x => {
+            if (!this.options.repos.length) {
+                return true;
+            }
+            return this.options.repos.includes(x.name);
+        });
 
         return this.repos;
     }

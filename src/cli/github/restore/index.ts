@@ -3,7 +3,6 @@ import { GithubCodeRestore } from "./code";
 import { GithubIssueRestore } from "./issue";
 import { GithubLabelRestore } from "./label";
 import { GithubSettingsRestore } from "./settings";
-import { GithubMilestoneRestore } from "./milestone";
 
 export class GithubRestore extends AbstractGithubRestore {
 
@@ -14,7 +13,6 @@ export class GithubRestore extends AbstractGithubRestore {
         this.restoreInstances = [
             new GithubCodeRestore(this.options),
             new GithubLabelRestore(this.options),
-            new GithubMilestoneRestore(this.options),
             new GithubIssueRestore(this.options),
             new GithubSettingsRestore(this.options),
         ];
