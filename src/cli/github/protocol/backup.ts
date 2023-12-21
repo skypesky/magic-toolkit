@@ -17,7 +17,6 @@ export interface GithubBackupOptions {
      * @memberof GithubBackupOptions
      */
     dir?: string;
-<<<<<<< HEAD
 
     /**
      * 
@@ -27,8 +26,6 @@ export interface GithubBackupOptions {
      * @memberof GithubBackupOptions
      */
     repos?: string[];
-=======
->>>>>>> release
 }
 
 export type Repository = RestEndpointMethodTypes["repos"]["listForOrg"]["response"]['data'][0];
@@ -68,7 +65,6 @@ export abstract class AbstractGithubBackup {
             type: "all"
         });
 
-<<<<<<< HEAD
         // 注意此处过滤一下
         this.repos = data.filter(x => {
             if (!this.options.repos.length) {
@@ -76,9 +72,6 @@ export abstract class AbstractGithubBackup {
             }
             return this.options.repos.includes(x.name);
         });
-=======
-        this.repos = data;
->>>>>>> release
 
         return this.repos;
     }
