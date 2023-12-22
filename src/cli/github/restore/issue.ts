@@ -40,7 +40,7 @@ export class GithubIssueRestore extends AbstractGithubRestore {
         // 如果创建过了 issue 就不创建了
         const exists = await this.issueExists(issueMeta.repoName, issueData.title);
         if (!exists) {
-            const assignees = issueData.assignees.length ? `\r\n\r\n  assignees: @${issueData.assignees.map(x => `@${x.login}`).join(',')}` : '';
+            const assignees = issueData.assignees.length ? `\r\n\r\n  assignees: ${issueData.assignees.map(x => `@${x.login}`).join(',')}` : '';
 
             await this.octokit.issues.create({
                 owner: this.options.org,
@@ -52,6 +52,12 @@ export class GithubIssueRestore extends AbstractGithubRestore {
         }
 
         const issue: Issue = await this.getIssue(issueMeta.repoName, issueData.title);
+
+        if (!issue) {
+            console.warn(`Issue not found: '${issueData.title}' in repository '${issueMeta.repoName}'.`);
+            return;
+        }
+
         const { data: comments } = await this.octokit.issues.listComments({
             owner: this.options.org,
             repo: issueMeta.repoName,
@@ -77,6 +83,7 @@ export class GithubIssueRestore extends AbstractGithubRestore {
     }
 
     async getIssue(repoName: string, issueTitle: string): Promise<Issue> {
+
         const existingIssues = await this.octokit.issues.listForRepo({
             owner: this.options.org,
             repo: repoName,
