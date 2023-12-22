@@ -84,12 +84,12 @@ export class GithubIssueRestore extends AbstractGithubRestore {
 
     async getIssue(repoName: string, issueTitle: string): Promise<Issue> {
 
-        const existingIssues = await this.octokit.issues.listForRepo({
+        const existingIssues = await this.octokit.paginate(this.octokit.issues.listForRepo, {
             owner: this.options.org,
             repo: repoName,
         });
 
-        return existingIssues.data.find(issue => issue.title === issueTitle);
+        return existingIssues.find(issue => issue.title === issueTitle);
     }
 
     async issueExists(repoName: string, issueTitle: string): Promise<boolean> {
