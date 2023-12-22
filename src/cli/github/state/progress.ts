@@ -65,7 +65,12 @@ export class ReposBackupProgress {
       this.db.data.createdAt = new Date().toISOString();
       this.db.data.repos.push(...repos);
       this.db.data.count = repos.length;
-      this.db.data.summary.repoCount = repos.length;
+      this.db.data.summary = {
+        repoCount: repos.length,
+        issueCount: 0,
+        durationMs: 0,
+        durationText: '',
+      }
       await this.db.write();
     }
   }

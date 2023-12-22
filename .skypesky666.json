@@ -1,11 +1,11 @@
 {
-  "createdAt": "2023-12-21T14:28:51.854Z",
+  "createdAt": "2023-12-22T01:04:57.195Z",
   "repos": [],
   "count": 0,
   "summary": {
     "repoCount": 2,
     "issueCount": 3,
-    "durationMs": 4303,
-    "durationText": "4.3s"
+    "durationMs": 3184,
+    "durationText": "3.1s"
   }
 }
