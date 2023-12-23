@@ -1,3 +1,7 @@
+# 2023/12/23(0.0.5)
+
+- feat: support for displaying disk usage for backups
+
 # 2023/12/21(0.0.4)
 
 - feat: export more data on backup progress
