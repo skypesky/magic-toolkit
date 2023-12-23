@@ -3,7 +3,7 @@ import { isAbsolute, join } from "path";
 import { cwd } from "process";
 import Hash from 'ipfs-only-hash';
 import { CID } from "multiformats";
-import { statSync } from "fs-extra";
+import { pathExists, statSync } from "fs-extra";
 import xbytes from "xbytes";
 import prettyMilliseconds from 'pretty-ms';
 
@@ -22,7 +22,7 @@ export class ipfs {
 
         const absolutePath = isAbsolute(path) ? path : join(cwd(), path);
 
-        if (!existsSync(absolutePath)) {
+        if (!await pathExists(absolutePath)) {
             throw new Error(`Could not find file ${absolutePath}`);
         }
 

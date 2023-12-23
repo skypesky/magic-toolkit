@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { defaultCommand } from "./default";
+import { IPFSInfo, ipfs } from "../../classes";
 
 function ipfsCommand() {
   const command = new Command();
@@ -7,7 +7,16 @@ function ipfsCommand() {
   command
     .name("ipfs")
     .description("Get ipfs info")
-    .addCommand(defaultCommand(), { isDefault: true });
+    .argument("[path]", "Get ipfs info(size, cid etc) for a specified path")
+    .action(async (path: string) => {
+
+      if (!path) {
+        return command.help();
+      }
+
+      const info: IPFSInfo = await ipfs.getInfo(path);
+      console.log(info);
+    });
 
   return command;
 }

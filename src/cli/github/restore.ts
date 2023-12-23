@@ -6,11 +6,11 @@ function restoreCommand(): Command {
 
     command
         .name("restore")
-        .requiredOption("-o, --org <org>", "Organization name")
-        .requiredOption("-t, --token <token>", "Personal token")
-        .option("-r, --repos <repos>", "Specify repository, multiple repositories , interval", '')
+        .requiredOption("-o, --org <org>", "Github organization name")
+        .requiredOption("-t, --token <token>", "Github personal token")
+        .option("-r, --repos <repos>", "Specific repository, multiple repositories, please use ',' split", '')
         .option("-d, --dir <dir>", "Path to the backup folder", undefined)
-        .description("Restore github repo")
+        .description("Restore github repos")
         .action(async (options: Record<string, string>) => {
 
             const org = options.org;

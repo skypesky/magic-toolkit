@@ -59,6 +59,7 @@ export class ReposBackupProgress {
       this.db.data = this.getDefaultData();
       this.db.data.repos.push(...repos);
       this.db.data.count = repos.length;
+      this.db.data.summary.repoCount = repos.length;
     }
     await this.db.write();
   }

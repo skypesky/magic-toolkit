@@ -7,7 +7,7 @@ function githubCommand() {
 
   command
     .name("github")
-    .description("Github backup, restore tools")
+    .description("Github backup and restore")
     .addCommand(backupCommand())
     .addCommand(restoreCommand());
 
