@@ -47,6 +47,7 @@ send_slack_message() {
   repoCount=$(echo "$summary" | jq -r '.repoCount')
   issueCount=$(echo "$summary" | jq -r '.issueCount')
   durationText=$(echo "$summary" | jq -r '.durationText')
+  storageUsageText=$(echo "$summary" | jq -r '.storageUsageText')
 
   if [[ $message_type == "success" ]]; then
     payload='{
@@ -79,6 +80,10 @@ send_slack_message() {
             {
               "type": "mrkdwn",
               "text": "*Duration:*\n '"$durationText"'"
+            },
+            {
+              "type": "mrkdwn",
+              "text": "*usedCapacity:*\n '"$storageUsageText"'"
             }
           ]
         }
