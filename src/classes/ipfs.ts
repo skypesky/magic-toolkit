@@ -1,4 +1,4 @@
-import { createReadStream, existsSync } from "fs";
+import { createReadStream } from "fs";
 import { isAbsolute, join } from "path";
 import { cwd } from "process";
 import Hash from 'ipfs-only-hash';
