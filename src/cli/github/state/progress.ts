@@ -1,9 +1,12 @@
 
 import FastGlob, { Entry } from 'fast-glob';
+import { pathExists, stat } from 'fs-extra';
 import { Low } from 'lowdb/lib';
 import { JSONPreset } from 'lowdb/node'
 import { join } from 'path';
 import prettyMilliseconds from 'pretty-ms';
+import xbytes from 'xbytes';
+import getFolderSize from 'get-folder-size';
 
 export interface ReposBackupProgressOptions {
 
@@ -30,8 +33,8 @@ export interface Data {
   summary: {
     repoCount: number;
     issueCount: number;
-    durationMs: number;
     durationText: string;
+    storageUsageText: string;
   }
 }
 
@@ -48,25 +51,30 @@ export class ReposBackupProgress {
     this.filename = join(this.options.dir, `.${this.options.org}.json`)
   }
 
+
   async init(repos: Repo[]): Promise<void> {
-    this.db = await JSONPreset<Data>(this.filename, {
+    this.db = await JSONPreset<Data>(this.filename, this.getDefaultData());
+
+    if (!this.db.data.repos.length) {
+      this.db.data = this.getDefaultData();
+      this.db.data.repos.push(...repos);
+      this.db.data.count = repos.length;
+      this.db.data.summary.repoCount = repos.length;
+    }
+    await this.db.write();
+  }
+
+  private getDefaultData(): Data {
+    return {
       createdAt: new Date().toISOString(),
       repos: [],
       count: 0,
       summary: {
         repoCount: 0,
         issueCount: 0,
-        durationMs: 0,
         durationText: '',
+        storageUsageText: '',
       }
-    });
-
-    if (!this.db.data.repos.length) {
-      this.db.data.createdAt = new Date().toISOString();
-      this.db.data.repos.push(...repos);
-      this.db.data.count = repos.length;
-      this.db.data.summary.repoCount = repos.length;
-      await this.db.write();
     }
   }
 
@@ -110,17 +118,32 @@ export class ReposBackupProgress {
       objectMode: true,
     });
 
-    const now = Date.now();
     this.db.data.summary = {
       repoCount: this.db.data.count,
       issueCount: entryList.length,
-      durationMs: now - new Date(this.db.data.createdAt).getTime(),
-      durationText: prettyMilliseconds(now - new Date(this.db.data.createdAt).getTime()),
+      durationText: prettyMilliseconds(Date.now() - new Date(this.db.data.createdAt).getTime()),
+      storageUsageText: xbytes(await this.getStorageUsage()),
+    };
+
+    const defaultData = this.getDefaultData();
+
+    this.db.data.createdAt = defaultData.createdAt;
+    this.db.data.count = defaultData.count;
+    await this.db.write();
+  }
+
+  private async getStorageUsage(): Promise<number> {
+    const orgFolder = join(this.options.dir, this.options.org);
+
+    if (!pathExists(orgFolder)) {
+      console.warn('Can not find org folder: ' + orgFolder);
+      return 0;
     }
 
-    this.db.data.createdAt = new Date().toISOString();
-    this.db.data.count = 0;
-    await this.db.write();
+
+    const file = await getFolderSize(orgFolder);
+
+    return file.size;
   }
 
   async printProgress(data: Record<string, string> = {}): Promise<void> {

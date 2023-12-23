@@ -47,10 +47,11 @@ send_slack_message() {
   repoCount=$(echo "$summary" | jq -r '.repoCount')
   issueCount=$(echo "$summary" | jq -r '.issueCount')
   durationText=$(echo "$summary" | jq -r '.durationText')
+  storageUsageText=$(echo "$summary" | jq -r '.storageUsageText')
 
   if [[ $message_type == "success" ]]; then
     payload='{
-      "title": "Github Backup title",
+      "username": "GitHub Backup Bot",
       "attachments": [{
         "color": "good",
         "author_name": "Github Backup",
@@ -70,15 +71,19 @@ send_slack_message() {
           "fields": [
             {
               "type": "mrkdwn",
-              "text": "*repo count:*\n '"$repoCount"'"
+              "text": "*RepoCount:*\n '"$repoCount"'"
             },
             {
               "type": "mrkdwn",
-              "text": "*issue count:*\n '"$issueCount"'"
+              "text": "*IssueCount:*\n '"$issueCount"'"
             },
             {
               "type": "mrkdwn",
-              "text": "*duration:*\n '"$durationText"'"
+              "text": "*Duration:*\n '"$durationText"'"
+            },
+            {
+              "type": "mrkdwn",
+              "text": "*usedCapacity:*\n '"$storageUsageText"'"
             }
           ]
         }
@@ -86,7 +91,7 @@ send_slack_message() {
     }'
   else
     payload='{
-      "title": "Github Backup title",
+      "username": "GitHub Backup Bot",
       "attachments": [{
         "color": "danger",
         "author_name": "Github Backup",

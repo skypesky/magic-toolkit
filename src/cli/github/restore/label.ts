@@ -24,7 +24,8 @@ export class GithubLabelRestore extends AbstractGithubRestore {
         await pAll(
             labelsData.map(label => {
                 return async () => {
-                    if (! await this.labelExists(labelMeta.repoName, label.name)) {
+
+                    if (!await this.labelExists(labelMeta.repoName, label.name)) {
                         await this.octokit.issues.createLabel({
                             owner: this.options.org,
                             repo: labelMeta.repoName,
@@ -43,11 +44,12 @@ export class GithubLabelRestore extends AbstractGithubRestore {
 
     async labelExists(repoName: string, labelName: string): Promise<boolean> {
         try {
-            const existingLabels = await this.octokit.issues.listLabelsForRepo({
+            const existingLabels = await this.octokit.paginate(this.octokit.issues.listLabelsForRepo, {
                 owner: this.options.org,
                 repo: repoName,
+                per_page: 100,
             });
-            const labelExists = existingLabels.data.some(label => label.name === labelName);
+            const labelExists = existingLabels.some(label => label.name === labelName);
 
             return labelExists;
         } catch (error) {

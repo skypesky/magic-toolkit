@@ -17,7 +17,6 @@ export class md5 {
 
     static async getInfo(path: string): Promise<md5Info> {
 
-
         const absolutePath = isAbsolute(path) ? path : join(cwd(), path);
 
         if (!existsSync(absolutePath)) {
@@ -27,7 +26,7 @@ export class md5 {
         const startTime = Date.now();
         const size: number = statSync(absolutePath).size;
 
-        const md5: string = await hasha.fromStream(createReadStream(absolutePath), {algorithm: "md5"});
+        const md5: string = await hasha.fromStream(createReadStream(absolutePath), { algorithm: "md5" });
         const duration: string = prettyMilliseconds(Date.now() - startTime);
 
         return {

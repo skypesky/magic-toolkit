@@ -1,6 +1,6 @@
 {
   "name": "magic-toolkit",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "bin": {
     "mt": "./dist/index.js"
   },
@@ -15,15 +15,11 @@
   },
   "homepage": "https://github.com/skypesky/magic-toolkit",
   "keywords": [
-    "open",
-    "alias",
-    "system",
-    "dir",
-    "website",
-    "git",
-    "repo",
-    "issue",
-    "pr"
+    "ipfs",
+    "md5",
+    "github",
+    "backup",
+    "restore"
   ],
   "files": [
     "dist"
@@ -54,6 +50,7 @@
     "dayjs": "^1.11.7",
     "fast-glob": "^3.3.2",
     "fs-extra": "^10.1.0",
+    "get-folder-size": "^4.0.0",
     "git-remote-origin-url": "3.1.0",
     "git-repo-info": "^2.1.1",
     "got": "^14.0.0",

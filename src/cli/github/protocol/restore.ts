@@ -54,15 +54,17 @@ export interface GithubRestoreOptions {
 }
 
 export type User = RestEndpointMethodTypes["users"]["getAuthenticated"]["response"]['data'];
-
+export interface RepoCache {
+    issues: Array<RestEndpointMethodTypes["issues"]["listForRepo"]["response"]['data']>;
+}
 
 export abstract class AbstractGithubRestore {
 
     readonly options: GithubRestoreOptions;
     readonly octokit: Octokit;
-
     abstract restore(): Promise<void>;
     abstract restoreRepository(repoName: string): Promise<void>;
+    private repoCache: Map<string, RepoCache> = new Map<string, RepoCache>();
 
     constructor(options: GithubRestoreOptions) {
         this.options = {
