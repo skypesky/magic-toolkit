@@ -83,7 +83,7 @@ send_slack_message() {
             },
             {
               "type": "mrkdwn",
-              "text": "*usedCapacity:*\n '"$storageUsageText"'"
+              "text": "*UsedCapacity:*\n '"$storageUsageText"'"
             }
           ]
         }
