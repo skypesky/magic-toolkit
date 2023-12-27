@@ -61,7 +61,6 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@types/commander": "^2.12.2",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^29.2.2",
     "@types/lodash": "^4.14.187",
