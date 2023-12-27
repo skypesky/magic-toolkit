@@ -1,7 +1,7 @@
 import { createReadStream } from "fs";
 import { isAbsolute, join } from "path";
 import { cwd } from "process";
-import Hash from 'ipfs-only-hash';
+import {onlyHash} from '@arcblock/ipfs-only-hash';
 import { CID } from "multiformats";
 import { pathExists, statSync } from "fs-extra";
 import xbytes from "xbytes";
@@ -30,7 +30,7 @@ export class ipfs {
         const readStream = createReadStream(absolutePath);
         const size: number = statSync(absolutePath).size;
 
-        const cidV0: string = await Hash.of(readStream);
+        const cidV0: string = await onlyHash(readStream);
         const cidV1: string = CID.parse(cidV0).toV1().toString();
         const duration: string = prettyMilliseconds(Date.now() - startTime);
 
